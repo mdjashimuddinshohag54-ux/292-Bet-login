@@ -8,106 +8,558 @@
 
 <style>
 *{
-    box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#f5f6f8;
-    color:#222;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  color:#222;
 }
 
 .header{
-    background:#1976d2;
-    color:#fff;
-    padding:20px 16px;
+  background:#1976d2;
+  color:#fff;
+  padding:20px 15px;
 }
 
 .header-inner{
-    max-width:650px;
-    margin:auto;
+  max-width:600px;
+  margin:auto;
 }
 
 .logo{
-    font-size:24px;
-    font-weight:bold;
+  font-size:23px;
+  font-weight:bold;
 }
 
-.welcome{
-    margin-top:8px;
-    font-size:14px;
-    opacity:.95;
-    word-break:break-all;
+.email{
+  margin-top:7px;
+  font-size:13px;
+  word-break:break-all;
 }
 
 .container{
-    max-width:650px;
-    margin:20px auto;
-    padding:0 14px 40px;
+  max-width:600px;
+  margin:20px auto;
+  padding:0 14px 40px;
 }
 
-/* BALANCE */
+.card{
+  background:#fff;
+  padding:20px;
+  margin-bottom:18px;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
 
-.balance-card{
-    background:#fff;
-    border-radius:12px;
-    padding:22px;
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
-    margin-bottom:18px;
+.card h2{
+  margin:0 0 15px;
+  font-size:19px;
 }
 
 .balance-title{
-    color:#666;
-    font-size:14px;
+  color:#666;
+  font-size:14px;
 }
 
 .balance{
-    font-size:32px;
-    font-weight:bold;
-    color:#1976d2;
-    margin:8px 0 18px;
+  color:#1976d2;
+  font-size:32px;
+  font-weight:bold;
+  margin:8px 0 18px;
 }
 
-.action-row{
-    display:flex;
-    gap:10px;
+.buttons{
+  display:flex;
+  gap:10px;
 }
-
-.action-row button{
-    flex:1;
-}
-
-/* BUTTON */
 
 button{
-    border:0;
-    border-radius:7px;
-    padding:13px;
-    font-size:15px;
-    cursor:pointer;
-    color:#fff;
+  border:0;
+  border-radius:6px;
+  padding:13px;
+  font-size:15px;
+  cursor:pointer;
+  color:#fff;
+}
+
+.buttons button{
+  flex:1;
 }
 
 .deposit-btn{
-    background:#198754;
+  background:#198754;
 }
 
 .withdraw-btn{
-    background:#dc3545;
+  background:#dc3545;
 }
 
-.logout-btn{
-    background:#444;
-    width:100%;
+input,
+select{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border:1px solid #ddd;
+  border-radius:6px;
+  font-size:15px;
 }
 
-/* CARD */
+input:focus,
+select:focus{
+  outline:none;
+  border-color:#1976d2;
+}
 
-.card{
-    background:#fff;
-    border-radius:12px;
-    padding:20px;
+.submit-deposit{
+  width:100%;
+  background:#198754;
+  margin-top:8px;
+}
+
+.submit-withdraw{
+  width:100%;
+  background:#dc3545;
+  margin-top:8px;
+}
+
+.message{
+  margin-top:12px;
+  padding:12px;
+  border-radius:7px;
+  line-height:1.6;
+  font-size:14px;
+  display:none;
+}
+
+.success{
+  display:block;
+  background:#e8f5e9;
+  color:#176b3a;
+}
+
+.error{
+  display:block;
+  background:#ffebee;
+  color:#b71c1c;
+}
+
+.pending{
+  color:#f57c00;
+  font-weight:bold;
+}
+
+.approved{
+  color:#198754;
+  font-weight:bold;
+}
+
+.rejected{
+  color:#dc3545;
+  font-weight:bold;
+}
+
+.history{
+  border:1px solid #eee;
+  background:#fafafa;
+  border-radius:7px;
+  padding:12px;
+  margin-top:10px;
+  line-height:1.7;
+}
+
+.profile-row{
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+.profile-row:last-child{
+  border-bottom:0;
+}
+
+.label{
+  color:#777;
+}
+
+.value{
+  display:block;
+  margin-top:4px;
+  word-break:break-all;
+}
+
+.logout{
+  width:100%;
+  background:#444;
+}
+
+@media(max-width:420px){
+  .buttons{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">292 Bet</div>
+    <div class="email" id="userEmail">লোড হচ্ছে...</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- BALANCE -->
+
+  <div class="card">
+
+    <div class="balance-title">
+      Available Balance
+    </div>
+
+    <div class="balance">
+      ৳ <span id="balance">0.00</span>
+    </div>
+
+    <div class="buttons">
+
+      <button
+        class="deposit-btn"
+        onclick="goTo('depositCard')">
+        💳 Deposit
+      </button>
+
+      <button
+        class="withdraw-btn"
+        onclick="goTo('withdrawCard')">
+        💸 Withdraw
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- DEPOSIT -->
+
+  <div class="card" id="depositCard">
+
+    <h2>💳 Deposit</h2>
+
+    <p>
+      আপনার নির্ধারিত payment number-এ টাকা পাঠানোর পর
+      Transaction ID এখানে লিখুন।
+    </p>
+
+    <p>
+      <b>Nagad:</b> 01720159859
+    </p>
+
+    <input
+      type="number"
+      id="depositAmount"
+      min="1"
+      placeholder="Amount (৳)"
+    >
+
+    <input
+      type="text"
+      id="transactionId"
+      placeholder="Transaction ID"
+    >
+
+    <button
+      class="submit-deposit"
+      id="depositButton"
+      onclick="submitDeposit()">
+
+      Submit Deposit Request
+
+    </button>
+
+    <div id="depositMessage" class="message"></div>
+
+  </div>
+
+
+  <!-- WITHDRAW -->
+
+  <div class="card" id="withdrawCard">
+
+    <h2>💸 Withdraw / Refund</h2>
+
+    <input
+      type="number"
+      id="withdrawAmount"
+      min="1"
+      placeholder="Amount (৳)"
+    >
+
+    <select id="withdrawMethod">
+
+      <option value="">
+        Payment Method নির্বাচন করুন
+      </option>
+
+      <option value="Nagad">
+        Nagad
+      </option>
+
+      <option value="bKash">
+        bKash
+      </option>
+
+    </select>
+
+    <input
+      type="tel"
+      id="withdrawNumber"
+      placeholder="Payment Number"
+    >
+
+    <button
+      class="submit-withdraw"
+      id="withdrawButton"
+      onclick="submitWithdraw()">
+
+      Submit Withdraw Request
+
+    </button>
+
+    <div id="withdrawMessage" class="message"></div>
+
+  </div>
+
+
+  <!-- DEPOSIT HISTORY -->
+
+  <div class="card">
+
+    <h2>📋 Deposit History</h2>
+
+    <div id="depositHistory">
+      লোড হচ্ছে...
+    </div>
+
+  </div>
+
+
+  <!-- WITHDRAW HISTORY -->
+
+  <div class="card">
+
+    <h2>📋 Withdraw / Refund History</h2>
+
+    <div id="withdrawHistory">
+      লোড হচ্ছে...
+    </div>
+
+  </div>
+
+
+  <!-- ACCOUNT -->
+
+  <div class="card">
+
+    <h2>👤 My Account</h2>
+
+    <div class="profile-row">
+      <span class="label">Email</span>
+      <span class="value" id="profileEmail">-</span>
+    </div>
+
+    <div class="profile-row">
+      <span class="label">Firebase UID</span>
+      <span class="value" id="profileUid">-</span>
+    </div>
+
+    <div class="profile-row">
+      <span class="label">Account Status</span>
+      <span class="value">Active</span>
+    </div>
+
+  </div>
+
+
+  <button
+    class="logout"
+    onclick="logout()">
+
+    🚪 Logout
+
+  </button>
+
+</div>
+
+
+<script type="module">
+
+import {
+  initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  addDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+  authDomain:
+  "bet-e114b.firebaseapp.com",
+
+  projectId:
+  "bet-e114b",
+
+  storageBucket:
+  "bet-e114b.firebasestorage.app",
+
+  messagingSenderId:
+  "464681620003",
+
+  appId:
+  "1:464681620003:web:3169096c02b1d9ce3c5796"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+
+let currentUser = null;
+
+
+/* AUTH CHECK */
+
+onAuthStateChanged(
+  auth,
+  async (user) => {
+
+    if(!user){
+
+      window.location.href =
+      "./index.html";
+
+      return;
+    }
+
+    currentUser = user;
+
+    document.getElementById(
+      "userEmail"
+    ).textContent = user.email;
+
+    document.getElementById(
+      "profileEmail"
+    ).textContent = user.email;
+
+    document.getElementById(
+      "profileUid"
+    ).textContent = user.uid;
+
+
+    loadBalance(user.uid);
+
+    loadDeposits(user.uid);
+
+    loadWithdraws(user.uid);
+
+  }
+);
+
+
+/* BALANCE */
+
+function loadBalance(uid){
+
+  const userRef =
+  doc(db,"users",uid);
+
+  onSnapshot(
+    userRef,
+    (snapshot) => {
+
+      if(!snapshot.exists()){
+
+        document.getElementById(
+          "balance"
+        ).textContent = "0.00";
+
+        return;
+      }
+
+      const data =
+      snapshot.data();
+
+      const amount =
+      Number(data.balance || 0);
+
+      document.getElementById(
+        "balance"
+      ).textContent =
+      amount.toFixed(2);
+
+    },
+
+    (error) => {
+
+      console.error(
+        "Balance error:",
+        error
+      );
+
+    }
+  );
+}
+
+
+/* DEPOSIT */
+
+window.submitDeposit =
+async function(){
+
+  const message =
+  document.getElementById(
+    "    padding:20px;
     margin-bottom:18px;
     box-shadow:0 2px 10px rgba(0,0,0,.07);
 }
