@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>292 Bet - Login & Registration</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f2f4f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 25px rgba(0,0,0,.12);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 13px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #1976d2;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.link {
+  text-align: center;
+  margin-top: 18px;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px;
+}
+
+#registerBox,
+#forgotBox,
+#userBox {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>292 Bet Login</h2>
+
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Email Address">
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <div class="link" onclick="showRegister()">
+      Create New Account
+    </div>
+
+    <div class="link" onclick="showForgot()">
+      Forgot Password?
+    </div>
+  </div>
+
+
+  <!-- REGISTRATION -->
+  <div id="registerBox">
+    <h2>Create Account</h2>
+
+    <input
+      type="email"
+      id="registerEmail"
+      placeholder="Email Address">
+
+    <input
+      type="password"
+      id="registerPassword"
+      placeholder="Password">
+
+    <input
+      type="password"
+      id="confirmPassword"
+      placeholder="Confirm Password">
+
+    <button onclick="register()">Register</button>
+
+    <div class="link" onclick="showLogin()">
+      Already have an account? Login
+    </div>
+  </div>
+
+
+  <!-- FORGOT PASSWORD -->
+  <div id="forgotBox">
+    <h2>Reset Password</h2>
+
+    <input
+      type="email"
+      id="resetEmail"
+      placeholder="Enter your email">
+
+    <button onclick="resetPassword()">
+      Send Reset Email
+    </button>
+
+    <div class="link" onclick="showLogin()">
+      Back to Login
+    </div>
+  </div>
+
+
+  <!-- LOGGED IN -->
+  <div id="userBox">
+    <h2>Welcome to 292 Bet</h2>
+
+    <p id="userEmail"></p>
+
+    <button onclick="logout()">
+      Logout
+    </button>
+  </div>
+
+  <div class="message" id="message"></div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+  authDomain:
+  "bet-e114b.firebaseapp.com",
+
+  projectId:
+  "bet-e114b",
+
+  storageBucket:
+  "bet-e114b.firebasestorage.app",
+
+  messagingSenderId:
+  "464681620003",
+
+  appId:
+  "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+  measurementId:
+  "G-NDVCWNKV8B"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+function message(text, success = false) {
+
+  const m = document.getElementById("message");
+
+  m.innerText = text;
+
+  m.style.color =
+    success ? "green" : "red";
+}
+
+
+function hideAll() {
+
+  document.getElementById("loginBox").style.display = "none";
+
+  document.getElementById("registerBox").style.display = "none";
+
+  document.getElementById("forgotBox").style.display = "none";
+
+  document.getElementById("userBox").style.display = "none";
+}
+
+
+window.showLogin = function() {
+
+  hideAll();
+
+  document.getElementById("loginBox").style.display = "block";
+};
+
+
+window.showRegister = function() {
+
+  hideAll();
+
+  document.getElementById("registerBox").style.display = "block";
+};
+
+
+window.showForgot = function() {
+
+  hideAll();
+
+  document.getElementById("forgotBox").style.display = "block";
+};
+
+
+window.register = async function() {
+
+  const email =
+    document.getElementById("registerEmail").value.trim();
+
+  const password =
+    document.getElementById("registerPassword").value;
+
+  const confirm =
+    document.getElementById("confirmPassword").value;
+
+
+  if (!email || !password || !confirm) {
+
+    message("Please fill all fields.");
+
+    return;
+  }
+
+
+  if (password !== confirm) {
+
+    message("Passwords do not match.");
+
+    return;
+  }
+
+
+  if (password.length < 6) {
+
+    message("Password must be at least 6 characters.");
+
+    return;
+  }
+
+
+  try {
+
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    message(
+      "Registration successful!",
+      true
+    );
+
+  } catch (error) {
+
+    message(error.message);
+  }
+};
+
+
+window.login = async function() {
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+
+  if (!email || !password) {
+
+    message("Please enter email and password.");
+
+    return;
+  }
+
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    message(
+      "Login successful!",
+      true
+    );
+
+  } catch (error) {
+
+    message(error.message);
+  }
+};
+
+
+window.resetPassword = async function() {
+
+  const email =
+    document.getElementById("resetEmail").value.trim();
+
+
+  if (!email) {
+
+    message("Please enter your email.");
+
+    return;
+  }
+
+
+  try {
+
+    await sendPasswordResetEmail(
+      auth,
+      email
+    );
+
+    message(
+      "Password reset email sent.",
+      true
+    );
+
+  } catch (error) {
+
+    message(error.message);
+  }
+};
+
+
+window.logout = async function() {
+
+  try {
+
+    await signOut(auth);
+
+    showLogin();
+
+  } catch (error) {
+
+    message(error.message);
+  }
+};
+
+
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+
+    hideAll();
+
+    document.getElementById("userBox").style.display = "block";
+
+    document.getElementById("userEmail").innerText =
+      "Logged in as: " + user.email;
+
+  } else {
+
+    showLogin();
+  }
+});
+
+</script>
+
+</body>
+</html>
