@@ -1,113 +1,675 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Member Dashboard</title>
+<title>My Account Dashboard</title>
 
 <style>
 *{
-  box-sizing:border-box;
+    box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f5f5;
-  color:#222;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    color:#222;
 }
 
 .header{
-  background:#1976d2;
-  color:#fff;
-  padding:20px 15px;
+    background:#1976d2;
+    color:white;
+    padding:20px 15px;
+    text-align:center;
 }
 
-.header-inner{
-  max-width:600px;
-  margin:auto;
-}
-
-.logo{
-  font-size:23px;
-  font-weight:bold;
-}
-
-.email{
-  margin-top:7px;
-  font-size:13px;
-  word-break:break-all;
-}
+.header h1{margin:0 0 6px;font-size:24px;}
+.header div{font-size:13px;opacity:.9;word-break:break-all;}
 
 .container{
-  max-width:600px;
-  margin:20px auto;
-  padding:0 14px 40px;
+    max-width:600px;
+    margin:20px auto;
+    padding:0 15px 35px;
 }
 
 .card{
-  background:#fff;
-  padding:20px;
-  margin-bottom:18px;
-  border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+    background:white;
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.card h2{
-  margin:0 0 15px;
-  font-size:19px;
-}
-
-.balance-title{
-  color:#666;
-  font-size:14px;
-}
+.card h2{margin:0 0 12px;font-size:20px;}
+.card p{color:#667085;line-height:1.5;}
 
 .balance{
-  color:#1976d2;
-  font-size:32px;
-  font-weight:bold;
-  margin:8px 0 18px;
+    font-size:30px;
+    font-weight:bold;
+    color:#1976d2;
+    text-align:center;
+    margin:15px 0 5px;
 }
 
-.buttons{
-  display:flex;
-  gap:10px;
+input{
+    width:100%;
+    padding:13px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:5px;
+    font-size:16px;
 }
+
+input:focus{border-color:#1976d2;outline:none;}
 
 button{
-  border:0;
-  border-radius:6px;
-  padding:13px;
-  font-size:15px;
-  cursor:pointer;
-  color:#fff;
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border:0;
+    border-radius:5px;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
 }
 
-.buttons button{
-  flex:1;
+.deposit{
+    background:#198754;
 }
 
-.deposit-btn{
-  background:#198754;
+.logout{
+    background:#333;
 }
 
-.withdraw-btn{
-  background:#dc3545;
+.message{
+    text-align:center;
+    margin-top:12px;
+    padding:12px;
+    border-radius:7px;
+    line-height:1.6;
 }
 
-input,
-select{
-  width:100%;
-  padding:13px;
-  margin:7px 0;
-  border:1px solid #ddd;
-  border-radius:6px;
-  font-size:15px;
+.info{
+    background:#e8f1ff;
+    padding:12px;
+    border-radius:6px;
+    color:#333;
+    line-height:1.6;
+    margin-top:10px;
 }
 
-input:focus,
+.request{
+    border-left:4px solid #1976d2;
+    padding:10px;
+    margin-top:10px;
+    background:#fafafa;
+    border-radius:5px;
+    line-height:1.7;
+}
+
+@media(max-width:420px){
+    .container{padding-left:10px;padding-right:10px;}
+    .card{padding:17px;}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>Customer Dashboard</h1>
+
+<div id="userEmail">
+Loading...
+</div>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- BALANCE -->
+
+<div class="card">
+
+<h2>💰 আমার ব্যালেন্স</h2>
+
+<div class="balance">
+
+৳<span id="balance">0.00</span>
+
+</div>
+
+</div>
+
+
+<!-- DEPOSIT -->
+
+<div class="card">
+
+<h2>💳 Deposit</h2>
+
+<p>আপনার payment amount লিখুন।</p>
+
+<input
+id="amount"
+type="number"
+min="1"
+step="1"
+placeholder="Amount (৳)"
+>
+
+
+<div class="info">
+
+<b>Nagad / bKash</b>
+
+<br>
+
+01720159859
+
+<br><br>
+
+Payment করার পর Transaction ID দিন।
+
+</div>
+
+
+<input
+id="transactionId"
+type="text"
+placeholder="Transaction ID"
+>
+
+
+<button
+class="deposit"
+onclick="submitDeposit()">
+
+Submit Deposit Request
+
+</button>
+
+
+<div
+id="depositMessage"
+class="message">
+</div>
+
+</div>
+
+
+<!-- REQUEST HISTORY -->
+
+<div class="card">
+
+<h2>📋 আমার Deposit Requests</h2>
+
+<div id="requests">
+
+Loading...
+
+</div>
+
+</div>
+
+
+<button
+class="logout"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+
+</div>
+
+
+
+<script type="module">
+
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    onSnapshot,
+    serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+    authDomain:
+    "bet-e114b.firebaseapp.com",
+
+    projectId:
+    "bet-e114b",
+
+    storageBucket:
+    "bet-e114b.firebasestorage.app",
+
+    messagingSenderId:
+    "464681620003",
+
+    appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+    measurementId:
+    "G-NDVCWNKV8B"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+
+const auth =
+getAuth(app);
+
+
+const db =
+getFirestore(app);
+
+
+let currentUser = null;
+
+
+
+/* LOGIN CHECK */
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if(!user){
+
+            window.location.href =
+            "./index.html";
+
+            return;
+
+        }
+
+
+        currentUser = user;
+
+
+        document.getElementById(
+            "userEmail"
+        ).innerText =
+        "Logged in as: "
+        + user.email;
+
+
+        loadBalance(user.uid);
+
+        loadRequests(user.uid);
+
+    }
+);
+
+
+
+/* LOAD BALANCE */
+
+function loadBalance(uid){
+
+    import(
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    ).then(
+        ({
+            doc,
+            onSnapshot
+        }) => {
+
+            const userRef =
+            doc(
+                db,
+                "users",
+                uid
+            );
+
+
+            onSnapshot(
+                userRef,
+                (snapshot) => {
+
+                    if(snapshot.exists()){
+
+                        const data =
+                        snapshot.data();
+
+
+                        const balance =
+                        Number(
+                            data.balance || 0
+                        );
+
+
+                        document.getElementById(
+                            "balance"
+                        ).innerText =
+                        balance.toFixed(2);
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+
+/* SUBMIT DEPOSIT */
+
+window.submitDeposit =
+async function(){
+
+    const amount =
+    Number(
+        document.getElementById(
+            "amount"
+        ).value
+    );
+
+
+    const transactionId =
+    document.getElementById(
+        "transactionId"
+    ).value.trim();
+
+
+    const message =
+    document.getElementById(
+        "depositMessage"
+    );
+
+
+    if(!currentUser){
+
+        message.className =
+        "message error";
+
+        message.innerHTML =
+        "❌ আপনার Login session পাওয়া যায়নি। আবার Login করুন।";
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        message.className =
+        "message error";
+
+        message.innerHTML =
+        "❌ সঠিক Amount লিখুন।";
+
+        return;
+
+    }
+
+
+    if(!transactionId){
+
+        message.className =
+        "message error";
+
+        message.innerHTML =
+        "❌ Transaction ID লিখুন।";
+
+        return;
+
+    }
+
+
+    try{
+
+        const button =
+        document.getElementById(
+            "depositButton"
+        );
+
+        button.disabled = true;
+        button.innerText =
+        "Request জমা হচ্ছে...";
+
+        await addDoc(
+
+            collection(
+                db,
+                "depositRequests"
+            ),
+
+            {
+
+                userId:
+                currentUser.uid,
+
+                userEmail:
+                currentUser.email,
+
+                amount:
+                amount,
+
+                transactionId:
+                transactionId,
+
+                status:
+                "pending",
+
+                createdAt:
+                serverTimestamp()
+
+            }
+
+        );
+
+
+        message.className =
+        "message success";
+
+        message.innerHTML =
+        "✅ <b>Deposit Request সফলভাবে জমা হয়েছে!</b><br>" +
+        "আপনার Request এখন <b>Pending</b> অবস্থায় আছে।<br>" +
+        "Admin আপনার Transaction ID যাচাই করে " +
+        "Approve অথবা Reject করবেন।";
+
+
+        document.getElementById(
+            "amount"
+        ).value = "";
+
+
+        document.getElementById(
+            "transactionId"
+        ).value = "";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        message.className =
+        "message error";
+
+        message.innerHTML =
+        "❌ <b>Deposit Request জমা হয়নি।</b><br>" +
+        "Firebase Rules বা Login session পরীক্ষা করুন।";
+
+    }
+
+    finally{
+
+        const button =
+        document.getElementById(
+            "depositButton"
+        );
+
+        button.disabled = false;
+        button.innerText =
+        "Submit Deposit Request";
+
+    }
+
+};
+
+
+
+/* LOAD REQUEST HISTORY */
+
+function loadRequests(uid){
+
+    const box =
+    document.getElementById(
+        "requests"
+    );
+
+
+    const q =
+    query(
+
+        collection(
+            db,
+            "depositRequests"
+        ),
+
+        where(
+            "userId",
+            "==",
+            uid
+        )
+
+    );
+
+
+    onSnapshot(
+
+        q,
+
+        (snapshot) => {
+
+            box.innerHTML = "";
+
+
+            if(snapshot.empty){
+
+                box.innerHTML =
+                "এখনও কোনো Deposit Request নেই।";
+
+                return;
+
+            }
+
+
+            snapshot.forEach(
+                (item) => {
+
+                    const data =
+                    item.data();
+
+
+                    const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                    div.className =
+                    "request";
+
+
+                    div.innerHTML = `
+
+                    <b>Amount:</b>
+                    ৳${Number(
+                        data.amount || 0
+                    ).toFixed(2)}
+
+                    <br>
+
+                    <b>Transaction ID:</b>
+                    ${data.transactionId || "N/A"}
+
+                    <br>
+
+                    <b>Status:</b>
+                    ${data.status || "pending"}
+
+                    `;
+
+
+                    box.appendChild(
+                        div
+                    );
+
+                }
+            );
+
+        }
+
+    );
+
+}
+
+
+
+/* LOGOUT */
+
+window.logout =
+async function(){
+
+    await signOut(auth);
+
+    window.location.href =
+    "./index.html";
+
+};
+
+
+</script>
+
+</body>
+
+</html>input:focus,
 select:focus{
   outline:none;
   border-color:#1976d2;
