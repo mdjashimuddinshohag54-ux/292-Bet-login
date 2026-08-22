@@ -1,57 +1,140 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>My Account Dashboard</title>
+<title>292 Bet - Dashboard</title>
 
 <style>
+
 *{
     box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 body{
-    margin:0;
     font-family:Arial,sans-serif;
-    background:#f5f5f5;
+    background:#f3f5f8;
     color:#222;
 }
 
+#loading{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:18px;
+}
+
+#dashboard{
+    display:none;
+}
+
 .header{
-    background:#1976d2;
+    background:linear-gradient(135deg,#1976d2,#0d47a1);
     color:white;
-    padding:20px 15px;
     text-align:center;
+    padding:22px 15px;
 }
 
-.header h1{margin:0 0 6px;font-size:24px;}
-.header div{font-size:13px;opacity:.9;word-break:break-all;}
+.header h1{
+    font-size:28px;
+}
 
-.container{
+.header p{
+    margin-top:6px;
+}
+
+.user-box{
     max-width:600px;
-    margin:20px auto;
-    padding:0 15px 35px;
+    margin:18px auto;
+    padding:0 15px;
 }
 
-.card{
+.user-card{
     background:white;
-    padding:20px;
-    margin-bottom:18px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    padding:18px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
 }
 
-.card h2{margin:0 0 12px;font-size:20px;}
-.card p{color:#667085;line-height:1.5;}
+.user-email{
+    color:#666;
+    margin-top:7px;
+    word-break:break-word;
+}
+
+.menu{
+    max-width:600px;
+    margin:18px auto;
+    padding:0 15px;
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.menu-item{
+    background:white;
+    padding:20px 8px;
+    text-align:center;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+    cursor:pointer;
+}
+
+.menu-item:active{
+    transform:scale(.97);
+}
+
+.icon{
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.menu-item h3{
+    font-size:15px;
+}
+
+.content{
+    max-width:600px;
+    margin:18px auto;
+    padding:0 15px 30px;
+}
+
+.section{
+    display:none;
+    background:white;
+    padding:22px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.section.active{
+    display:block;
+}
+
+.section h2{
+    margin-bottom:15px;
+}
 
 .balance{
-    font-size:30px;
-    font-weight:bold;
-    color:#1976d2;
-    text-align:center;
-    margin:15px 0 5px;
+    background:linear-gradient(135deg,#1976d2,#0d47a1);
+    color:white;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:18px;
+}
+
+.balance small{
+    opacity:.9;
+}
+
+.balance h2{
+    margin-top:8px;
+    font-size:28px;
 }
 
 input{
@@ -59,55 +142,897 @@ input{
     padding:13px;
     margin:8px 0;
     border:1px solid #ddd;
-    border-radius:5px;
+    border-radius:8px;
     font-size:16px;
 }
-
-input:focus{border-color:#1976d2;outline:none;}
 
 button{
     width:100%;
     padding:13px;
-    margin-top:10px;
-    border:0;
-    border-radius:5px;
+    border:none;
+    border-radius:8px;
+    background:#1976d2;
     color:white;
     font-size:16px;
     cursor:pointer;
+    margin-top:10px;
 }
 
-.deposit{
-    background:#198754;
+.copy-btn{
+    background:#555;
 }
 
-.logout{
-    background:#333;
+.submit-btn{
+    background:#168a45;
 }
 
-.message{
-    text-align:center;
+.logout-btn{
+    background:#d32f2f;
+}
+
+.payment-box{
+    margin-top:15px;
+    padding:15px;
+    border-radius:12px;
+    background:#f7f7f7;
+    border:1px solid #e5e5e5;
+}
+
+.number{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:7px;
+    letter-spacing:1px;
+}
+
+.note{
+    margin-top:15px;
+    padding:12px;
+    background:#fff8df;
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.success{
+    color:#168a45;
     margin-top:12px;
 }
 
-.info{
-    background:#e8f1ff;
-    padding:12px;
-    border-radius:6px;
-    color:#333;
-    line-height:1.6;
-    margin-top:10px;
+.error{
+    color:#d32f2f;
+    margin-top:12px;
 }
 
-.request{
-    border-left:4px solid #1976d2;
-    padding:10px;
-    margin-top:10px;
-    background:#fafafa;
-    border-radius:5px;
-    line-height:1.7;
+.transaction{
+    padding:13px 0;
+    border-bottom:1px solid #eee;
 }
 
-@media(max-width:420px){
+.footer{
+    text-align:center;
+    color:#777;
+    padding:25px;
+    font-size:13px;
+}
+
+@media(max-width:480px){
+
+    .header h1{
+        font-size:24px;
+    }
+
+    .menu{
+        gap:9px;
+    }
+
+    .menu-item{
+        padding:17px 5px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- LOGIN CHECK -->
+
+<div id="loading">
+    Login checking...
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+
+    <div class="header">
+
+        <h1>292 Bet</h1>
+
+        <p>Member Dashboard</p>
+
+    </div>
+
+
+    <!-- USER -->
+
+    <div class="user-box">
+
+        <div class="user-card">
+
+            <h3>Welcome 👋</h3>
+
+            <p
+                class="user-email"
+                id="userEmail">
+                Loading...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENU -->
+
+    <div class="menu">
+
+
+        <div
+            class="menu-item"
+            onclick="showSection('home')">
+
+            <div class="icon">📊</div>
+
+            <h3>Dashboard</h3>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="showSection('account')">
+
+            <div class="icon">👤</div>
+
+            <h3>My Account</h3>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="showSection('deposit')">
+
+            <div class="icon">💳</div>
+
+            <h3>Deposit</h3>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="showSection('withdraw')">
+
+            <div class="icon">💸</div>
+
+            <h3>Withdraw</h3>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="showSection('transactions')">
+
+            <div class="icon">📜</div>
+
+            <h3>Transactions</h3>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="logout()">
+
+            <div class="icon">🚪</div>
+
+            <h3>Logout</h3>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="content">
+
+
+        <!-- HOME -->
+
+        <div
+            id="home"
+            class="section active">
+
+            <div class="balance">
+
+                <small>
+                    Account Balance
+                </small>
+
+                <h2>
+                    ৳ 0.00
+                </h2>
+
+            </div>
+
+            <h2>
+                📊 Dashboard
+            </h2>
+
+            <p>
+                Welcome to your member dashboard.
+            </p>
+
+        </div>
+
+
+        <!-- ACCOUNT -->
+
+        <div
+            id="account"
+            class="section">
+
+            <h2>
+                👤 My Account
+            </h2>
+
+            <p>
+                <strong>Email:</strong>
+            </p>
+
+            <p id="accountEmail">
+                Loading...
+            </p>
+
+            <button
+                class="logout-btn"
+                onclick="logout()">
+
+                Logout
+
+            </button>
+
+        </div>
+
+
+        <!-- DEPOSIT -->
+
+        <div
+            id="deposit"
+            class="section">
+
+
+            <!-- STEP 1 -->
+
+            <div id="depositStep1">
+
+                <h2>
+                    💳 Deposit
+                </h2>
+
+                <p>
+                    আপনার জমা দেওয়ার পরিমাণ লিখুন।
+                </p>
+
+                <input
+                    type="number"
+                    id="depositAmount"
+                    placeholder="টাকার পরিমাণ"
+                    min="1">
+
+                <button
+                    onclick="goToPayment()">
+
+                    এগিয়ে যান
+
+                </button>
+
+                <p
+                    id="depositError"
+                    class="error">
+                </p>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div
+                id="depositStep2"
+                style="display:none;">
+
+                <h2>
+                    💳 Deposit Payment
+                </h2>
+
+                <p>
+                    নিচের নম্বরে টাকা পাঠানোর পর
+                    Transaction ID দিন।
+                </p>
+
+
+                <!-- BKASH -->
+
+                <div class="payment-box">
+
+                    <strong>
+                        bKash
+                    </strong>
+
+                    <div class="number">
+                        01720159859
+                    </div>
+
+                    <button
+                        class="copy-btn"
+                        onclick="copyNumber('01720159859')">
+
+                        Copy bKash Number
+
+                    </button>
+
+                </div>
+
+
+                <!-- NAGAD -->
+
+                <div class="payment-box">
+
+                    <strong>
+                        Nagad
+                    </strong>
+
+                    <div class="number">
+                        01720159859
+                    </div>
+
+                    <button
+                        class="copy-btn"
+                        onclick="copyNumber('01720159859')">
+
+                        Copy Nagad Number
+
+                    </button>
+
+                </div>
+
+
+                <div class="note">
+
+                    টাকা পাঠানোর পর
+                    <strong>
+                        Transaction ID
+                    </strong>
+                    নিচে লিখুন।
+
+                </div>
+
+
+                <input
+                    type="text"
+                    id="transactionId"
+                    placeholder="Transaction ID">
+
+
+                <button
+                    class="submit-btn"
+                    onclick="submitDeposit()">
+
+                    Submit Deposit Request
+
+                </button>
+
+
+                <button
+                    class="copy-btn"
+                    onclick="backToAmount()">
+
+                    ← পিছনে যান
+
+                </button>
+
+
+                <p
+                    id="depositResult"
+                    class="success">
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- WITHDRAW -->
+
+        <div
+            id="withdraw"
+            class="section">
+
+            <h2>
+                💸 Withdraw
+            </h2>
+
+            <p>
+                Withdraw request
+                এখানে পরে যুক্ত করা যাবে।
+            </p>
+
+            <input
+                type="number"
+                placeholder="টাকার পরিমাণ">
+
+            <input
+                type="text"
+                placeholder="bKash/Nagad Number">
+
+            <button>
+                Submit Withdraw Request
+            </button>
+
+        </div>
+
+
+        <!-- TRANSACTIONS -->
+
+        <div
+            id="transactions"
+            class="section">
+
+            <h2>
+                📜 Transactions
+            </h2>
+
+            <div class="transaction">
+
+                No transactions yet.
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="footer">
+
+        © 2026 292 Bet
+
+    </div>
+
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+/* FIREBASE CONFIG */
+
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+    authDomain:
+    "bet-e114b.firebaseapp.com",
+
+    projectId:
+    "bet-e114b",
+
+    storageBucket:
+    "bet-e114b.firebasestorage.app",
+
+    messagingSenderId:
+    "464681620003",
+
+    appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+    measurementId:
+    "G-NDVCWNKV8B"
+
+};
+
+
+
+const app =
+    initializeApp(firebaseConfig);
+
+
+const auth =
+    getAuth(app);
+
+
+const db =
+    getFirestore(app);
+
+
+
+/* LOGIN PROTECTION */
+
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if(user){
+
+            document
+                .getElementById("loading")
+                .style.display = "none";
+
+
+            document
+                .getElementById("dashboard")
+                .style.display = "block";
+
+
+            document
+                .getElementById("userEmail")
+                .innerText =
+                "Logged in as: "
+                + user.email;
+
+
+            document
+                .getElementById("accountEmail")
+                .innerText =
+                user.email;
+
+        }
+
+        else{
+
+            window.location.href =
+                "./index.html";
+
+        }
+
+    }
+);
+
+
+
+/* MENU */
+
+
+window.showSection =
+function(id){
+
+    document
+        .querySelectorAll(".section")
+        .forEach(
+            section => {
+
+                section
+                    .classList
+                    .remove("active");
+
+            }
+        );
+
+
+    document
+        .getElementById(id)
+        .classList
+        .add("active");
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+};
+
+
+
+/* DEPOSIT STEP 1 */
+
+
+window.goToPayment =
+function(){
+
+    const amount =
+        document
+        .getElementById("depositAmount")
+        .value;
+
+
+    const error =
+        document
+        .getElementById("depositError");
+
+
+    if(
+        !amount ||
+        Number(amount) <= 0
+    ){
+
+        error.innerText =
+            "দয়া করে টাকার পরিমাণ লিখুন।";
+
+        return;
+
+    }
+
+
+    error.innerText = "";
+
+
+    document
+        .getElementById("depositStep1")
+        .style.display = "none";
+
+
+    document
+        .getElementById("depositStep2")
+        .style.display = "block";
+
+};
+
+
+
+/* BACK */
+
+
+window.backToAmount =
+function(){
+
+    document
+        .getElementById("depositStep2")
+        .style.display = "none";
+
+
+    document
+        .getElementById("depositStep1")
+        .style.display = "block";
+
+};
+
+
+
+/* COPY NUMBER */
+
+
+window.copyNumber =
+async function(number){
+
+    try{
+
+        await navigator
+            .clipboard
+            .writeText(number);
+
+
+        alert(
+            "Number copied: "
+            + number
+        );
+
+    }
+
+    catch(error){
+
+        alert(
+            "Number: "
+            + number
+        );
+
+    }
+
+};
+
+
+
+/* SUBMIT DEPOSIT */
+
+
+window.submitDeposit =
+async function(){
+
+    const amount =
+        document
+        .getElementById("depositAmount")
+        .value;
+
+
+    const transactionId =
+        document
+        .getElementById("transactionId")
+        .value
+        .trim();
+
+
+    const result =
+        document
+        .getElementById("depositResult");
+
+
+    const user =
+        auth.currentUser;
+
+
+    if(!user){
+
+        result.className =
+            "error";
+
+        result.innerText =
+            "Please login first.";
+
+        return;
+
+    }
+
+
+    if(
+        !amount ||
+        Number(amount) <= 0
+    ){
+
+        result.className =
+            "error";
+
+        result.innerText =
+            "দয়া করে টাকার পরিমাণ লিখুন।";
+
+        return;
+
+    }
+
+
+    if(!transactionId){
+
+        result.className =
+            "error";
+
+        result.innerText =
+            "দয়া করে Transaction ID লিখুন।";
+
+        return;
+
+    }
+
+
+    try{
+
+        await addDoc(
+            collection(
+                db,
+                "depositRequests"
+            ),
+            {
+
+                userEmail:
+                    user.email,
+
+                amount:
+                    Number(amount),
+
+                transactionId:
+                    transactionId,
+
+                status:
+                    "pending",
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        result.className =
+            "success";
+
+
+        result.innerText =
+            "✅ Deposit request সফলভাবে জমা হয়েছে। যাচাই করার পর balance update করা হবে।";
+
+
+        document
+            .getElementById(
+                "depositAmount"
+            )
+            .value = "";
+
+
+        document
+            .getElementById(
+                "transactionId"
+            )
+            .value = "";
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+
+        result.className =
+            "error";
+
+
+        result.innerText =
+            "❌ Request জমা হয়নি। আবার চেষ্টা করুন।";
+
+    }
+
+};
+
+
+
+/* LOGOUT */
+
+
+window.logout =
+async function(){
+
+    await signOut(auth);
+
+
+    window.location.href =
+        "./index.html";
+
+};
+
+
+</script>
+
+</body>
+</html>@media(max-width:420px){
     .container{padding-left:10px;padding-right:10px;}
     .card{padding:17px;}
 }
