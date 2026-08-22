@@ -3,17 +3,11 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Admin Payment Dashboard</title>
+<title>Admin Dashboard</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-}
 
 body{
     margin:0;
@@ -25,7 +19,7 @@ body{
 .header{
     background:#1565c0;
     color:white;
-    padding:22px 15px;
+    padding:22px;
     text-align:center;
 }
 
@@ -35,6 +29,670 @@ body{
     padding:0 15px 40px;
 }
 
+.card{
+    background:white;
+    padding:18px;
+    margin-bottom:18px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.request{
+    border-left:5px solid #ff9800;
+    margin-top:12px;
+}
+
+.row{
+    margin:9px 0;
+    word-break:break-word;
+}
+
+.label{
+    font-weight:bold;
+}
+
+.status{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#fff3cd;
+    color:#856404;
+}
+
+.status.approved{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.status.rejected{
+    background:#f8d7da;
+    color:#842029;
+}
+
+button{
+    width:100%;
+    border:0;
+    padding:12px;
+    margin-top:8px;
+    border-radius:8px;
+    color:white;
+    font-size:16px;
+}
+
+.approve{
+    background:#198754;
+}
+
+.reject{
+    background:#dc3545;
+}
+
+.logout{
+    background:#333;
+}
+
+.empty{
+    text-align:center;
+    color:#777;
+    padding:15px;
+}
+
+.error{
+    color:#d32f2f;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>Admin Dashboard</h1>
+
+<p>Payment Management</p>
+
+</div>
+
+
+<div class="container">
+
+<div id="message">
+Checking admin access...
+</div>
+
+
+<div class="card">
+
+<h2>💳 Deposit Requests</h2>
+
+<div id="depositRequests">
+
+<div class="empty">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>💸 Withdraw / Refund Requests</h2>
+
+<div id="withdrawRequests">
+
+<div class="empty">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<button
+class="logout"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+</div>
+
+
+<script type="module">
+
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    doc,
+    updateDoc
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+    authDomain:
+    "bet-e114b.firebaseapp.com",
+
+    projectId:
+    "bet-e114b",
+
+    storageBucket:
+    "bet-e114b.firebasestorage.app",
+
+    messagingSenderId:
+    "464681620003",
+
+    appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+    measurementId:
+    "G-NDVCWNKV8B"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+
+const auth =
+getAuth(app);
+
+
+const db =
+getFirestore(app);
+
+
+const ADMIN_EMAIL =
+"mdjashimuddinshohag54@gmail.com";
+
+
+const message =
+document.getElementById("message");
+
+
+onAuthStateChanged(
+auth,
+(user) => {
+
+    if(!user){
+
+        window.location.href =
+        "./index.html";
+
+        return;
+    }
+
+
+    if(user.email !== ADMIN_EMAIL){
+
+        message.className =
+        "error";
+
+        message.innerText =
+        "❌ Admin access নেই।";
+
+
+        signOut(auth);
+
+        return;
+    }
+
+
+    message.innerText =
+    "✅ Admin access granted.";
+
+
+    loadDeposits();
+
+    loadWithdraws();
+
+});
+
+
+function loadDeposits(){
+
+    const box =
+    document.getElementById(
+        "depositRequests"
+    );
+
+
+    onSnapshot(
+
+        collection(
+            db,
+            "depositRequests"
+        ),
+
+        (snapshot) => {
+
+            box.innerHTML = "";
+
+
+            if(snapshot.empty){
+
+                box.innerHTML =
+                `<div class="empty">
+                কোনো Deposit Request নেই।
+                </div>`;
+
+                return;
+            }
+
+
+            snapshot.forEach(
+            (item) => {
+
+                const data =
+                item.data();
+
+
+                box.innerHTML += `
+
+                <div class="card request">
+
+                    <div class="row">
+                    <span class="label">
+                    Customer:
+                    </span>
+
+                    ${data.userEmail || "N/A"}
+                    </div>
+
+
+                    <div class="row">
+                    <span class="label">
+                    Amount:
+                    </span>
+
+                    ৳${data.amount || 0}
+                    </div>
+
+
+                    <div class="row">
+                    <span class="label">
+                    Transaction ID:
+                    </span>
+
+                    ${data.transactionId || "N/A"}
+                    </div>
+
+
+                    <div class="row">
+
+                    <span class="label">
+                    Status:
+                    </span>
+
+                    <span class="status
+                    ${data.status || "pending"}">
+
+                    ${data.status || "pending"}
+
+                    </span>
+
+                    </div>
+
+
+                    ${
+                    data.status === "pending"
+
+                    ?
+
+                    `
+
+                    <button
+                    class="approve"
+                    onclick="changeDeposit(
+                    '${item.id}',
+                    'approved'
+                    )">
+
+                    ✅ Approve
+
+                    </button>
+
+
+                    <button
+                    class="reject"
+                    onclick="changeDeposit(
+                    '${item.id}',
+                    'rejected'
+                    )">
+
+                    ❌ Reject
+
+                    </button>
+
+                    `
+
+                    :
+
+                    `<p>
+                    এই request process করা হয়েছে।
+                    </p>`
+                    }
+
+                </div>
+
+                `;
+
+            });
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            box.innerHTML =
+            `<div class="empty error">
+
+            ❌ Deposit requests load করা যায়নি।
+
+            <br><br>
+
+            ${error.message}
+
+            </div>`;
+
+        }
+
+    );
+
+}
+
+
+window.changeDeposit =
+async function(id,status){
+
+    try{
+
+        await updateDoc(
+
+            doc(
+                db,
+                "depositRequests",
+                id
+            ),
+
+            {
+                status:status
+            }
+
+        );
+
+
+        alert(
+        "Deposit "
+        + status
+        + " হয়েছে।"
+        );
+
+    }
+
+    catch(error){
+
+        alert(
+        "Update failed: "
+        + error.message
+        );
+
+    }
+
+};
+
+
+function loadWithdraws(){
+
+    const box =
+    document.getElementById(
+        "withdrawRequests"
+    );
+
+
+    onSnapshot(
+
+        collection(
+            db,
+            "withdrawRequests"
+        ),
+
+        (snapshot) => {
+
+            box.innerHTML = "";
+
+
+            if(snapshot.empty){
+
+                box.innerHTML =
+                `<div class="empty">
+
+                কোনো Withdraw/Refund Request নেই।
+
+                </div>`;
+
+                return;
+            }
+
+
+            snapshot.forEach(
+            (item) => {
+
+                const data =
+                item.data();
+
+
+                box.innerHTML += `
+
+                <div class="card request">
+
+                    <div class="row">
+
+                    <span class="label">
+                    Customer:
+                    </span>
+
+                    ${data.userEmail || "N/A"}
+
+                    </div>
+
+
+                    <div class="row">
+
+                    <span class="label">
+                    Amount:
+                    </span>
+
+                    ৳${data.amount || 0}
+
+                    </div>
+
+
+                    <div class="row">
+
+                    <span class="label">
+                    Number:
+                    </span>
+
+                    ${data.paymentNumber || "N/A"}
+
+                    </div>
+
+
+                    <div class="row">
+
+                    <span class="label">
+                    Status:
+                    </span>
+
+                    <span class="status
+                    ${data.status || "pending"}">
+
+                    ${data.status || "pending"}
+
+                    </span>
+
+                    </div>
+
+
+                    ${
+                    data.status === "pending"
+
+                    ?
+
+                    `
+
+                    <button
+                    class="approve"
+                    onclick="changeWithdraw(
+                    '${item.id}',
+                    'approved'
+                    )">
+
+                    ✅ Approve
+
+                    </button>
+
+
+                    <button
+                    class="reject"
+                    onclick="changeWithdraw(
+                    '${item.id}',
+                    'rejected'
+                    )">
+
+                    ❌ Reject
+
+                    </button>
+
+                    `
+
+                    :
+
+                    `<p>
+                    এই request process করা হয়েছে।
+                    </p>`
+
+                    }
+
+                </div>
+
+                `;
+
+            });
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            box.innerHTML =
+            `<div class="empty error">
+
+            ❌ Withdraw requests load করা যায়নি।
+
+            <br><br>
+
+            ${error.message}
+
+            </div>`;
+
+        }
+
+    );
+
+}
+
+
+window.changeWithdraw =
+async function(id,status){
+
+    try{
+
+        await updateDoc(
+
+            doc(
+                db,
+                "withdrawRequests",
+                id
+            ),
+
+            {
+                status:status
+            }
+
+        );
+
+
+        alert(
+        "Withdraw request "
+        + status
+        + " হয়েছে।"
+        );
+
+    }
+
+    catch(error){
+
+        alert(
+        "Update failed: "
+        + error.message
+        );
+
+    }
+
+};
+
+
+window.logout =
+async function(){
+
+    await signOut(auth);
+
+    window.location.href =
+    "./index.html";
+
+};
+
+
+</script>
+
+</body>
+
+</html>
 .card{
     background:white;
     padding:18px;
