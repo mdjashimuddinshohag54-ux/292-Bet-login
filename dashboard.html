@@ -1,113 +1,614 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>292 Bet - Dashboard</title>
+<title>Customer Dashboard</title>
 
 <style>
-
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
 }
 
 body{
+    margin:0;
     font-family:Arial,sans-serif;
     background:#f3f5f8;
-    color:#222;
-}
-
-#loading{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:18px;
-}
-
-#dashboard{
-    display:none;
 }
 
 .header{
-    background:linear-gradient(135deg,#1976d2,#0d47a1);
+    background:#1565c0;
     color:white;
-    text-align:center;
     padding:22px 15px;
-}
-
-.header h1{
-    font-size:28px;
-}
-
-.header p{
-    margin-top:6px;
-}
-
-.user-box{
-    max-width:600px;
-    margin:18px auto;
-    padding:0 15px;
-}
-
-.user-card{
-    background:white;
-    padding:18px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);
-}
-
-.user-email{
-    color:#666;
-    margin-top:7px;
-    word-break:break-word;
-}
-
-.menu{
-    max-width:600px;
-    margin:18px auto;
-    padding:0 15px;
-
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-
-.menu-item{
-    background:white;
-    padding:20px 8px;
     text-align:center;
-    border-radius:14px;
-    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.container{
+    max-width:600px;
+    margin:20px auto;
+    padding:0 15px 40px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.balance{
+    font-size:32px;
+    font-weight:bold;
+    color:#1565c0;
+    text-align:center;
+    margin:15px 0;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border:0;
+    border-radius:8px;
+    color:white;
+    font-size:16px;
     cursor:pointer;
 }
 
-.menu-item:active{
-    transform:scale(.97);
+.deposit{
+    background:#198754;
 }
 
-.icon{
-    font-size:30px;
-    margin-bottom:8px;
+.logout{
+    background:#333;
 }
 
-.menu-item h3{
-    font-size:15px;
+.message{
+    text-align:center;
+    margin-top:12px;
 }
 
-.content{
-    max-width:600px;
-    margin:18px auto;
-    padding:0 15px 30px;
+.info{
+    background:#e8f1ff;
+    padding:12px;
+    border-radius:8px;
+    margin-top:10px;
 }
 
-.section{
-    display:none;
-    background:white;
-    padding:22px;
+.request{
+    border-left:4px solid #ff9800;
+    padding:10px;
+    margin-top:10px;
+    background:#fafafa;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>Customer Dashboard</h1>
+
+<div id="userEmail">
+Loading...
+</div>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- BALANCE -->
+
+<div class="card">
+
+<h2>💰 আমার ব্যালেন্স</h2>
+
+<div class="balance">
+
+৳<span id="balance">0.00</span>
+
+</div>
+
+</div>
+
+
+<!-- DEPOSIT -->
+
+<div class="card">
+
+<h2>💳 Deposit</h2>
+
+<p>আপনার payment amount লিখুন।</p>
+
+<input
+id="amount"
+type="number"
+min="1"
+step="1"
+placeholder="Amount (৳)"
+>
+
+
+<div class="info">
+
+<b>Nagad / bKash</b>
+
+<br>
+
+01720159859
+
+<br><br>
+
+Payment করার পর Transaction ID দিন।
+
+</div>
+
+
+<input
+id="transactionId"
+type="text"
+placeholder="Transaction ID"
+>
+
+
+<button
+class="deposit"
+onclick="submitDeposit()">
+
+Submit Deposit Request
+
+</button>
+
+
+<div
+id="depositMessage"
+class="message">
+</div>
+
+</div>
+
+
+<!-- REQUEST HISTORY -->
+
+<div class="card">
+
+<h2>📋 আমার Deposit Requests</h2>
+
+<div id="requests">
+
+Loading...
+
+</div>
+
+</div>
+
+
+<button
+class="logout"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+
+</div>
+
+
+
+<script type="module">
+
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    onSnapshot,
+    serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+    authDomain:
+    "bet-e114b.firebaseapp.com",
+
+    projectId:
+    "bet-e114b",
+
+    storageBucket:
+    "bet-e114b.firebasestorage.app",
+
+    messagingSenderId:
+    "464681620003",
+
+    appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+    measurementId:
+    "G-NDVCWNKV8B"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+
+const auth =
+getAuth(app);
+
+
+const db =
+getFirestore(app);
+
+
+let currentUser = null;
+
+
+
+/* LOGIN CHECK */
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if(!user){
+
+            window.location.href =
+            "./index.html";
+
+            return;
+
+        }
+
+
+        currentUser = user;
+
+
+        document.getElementById(
+            "userEmail"
+        ).innerText =
+        "Logged in as: "
+        + user.email;
+
+
+        loadBalance(user.uid);
+
+        loadRequests(user.uid);
+
+    }
+);
+
+
+
+/* LOAD BALANCE */
+
+function loadBalance(uid){
+
+    import(
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    ).then(
+        ({
+            doc,
+            onSnapshot
+        }) => {
+
+            const userRef =
+            doc(
+                db,
+                "users",
+                uid
+            );
+
+
+            onSnapshot(
+                userRef,
+                (snapshot) => {
+
+                    if(snapshot.exists()){
+
+                        const data =
+                        snapshot.data();
+
+
+                        const balance =
+                        Number(
+                            data.balance || 0
+                        );
+
+
+                        document.getElementById(
+                            "balance"
+                        ).innerText =
+                        balance.toFixed(2);
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+
+/* SUBMIT DEPOSIT */
+
+window.submitDeposit =
+async function(){
+
+    const amount =
+    Number(
+        document.getElementById(
+            "amount"
+        ).value
+    );
+
+
+    const transactionId =
+    document.getElementById(
+        "transactionId"
+    ).value.trim();
+
+
+    const message =
+    document.getElementById(
+        "depositMessage"
+    );
+
+
+    if(!currentUser){
+
+        message.innerText =
+        "Login করুন।";
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        message.innerText =
+        "সঠিক Amount লিখুন।";
+
+        return;
+
+    }
+
+
+    if(!transactionId){
+
+        message.innerText =
+        "Transaction ID লিখুন।";
+
+        return;
+
+    }
+
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "depositRequests"
+            ),
+
+            {
+
+                userId:
+                currentUser.uid,
+
+                userEmail:
+                currentUser.email,
+
+                amount:
+                amount,
+
+                transactionId:
+                transactionId,
+
+                status:
+                "pending",
+
+                createdAt:
+                serverTimestamp()
+
+            }
+
+        );
+
+
+        message.innerText =
+        "✅ Deposit Request সফলভাবে জমা হয়েছে।";
+
+
+        document.getElementById(
+            "amount"
+        ).value = "";
+
+
+        document.getElementById(
+            "transactionId"
+        ).value = "";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        message.innerText =
+        "❌ Request জমা হয়নি: "
+        + error.message;
+
+    }
+
+};
+
+
+
+/* LOAD REQUEST HISTORY */
+
+function loadRequests(uid){
+
+    const box =
+    document.getElementById(
+        "requests"
+    );
+
+
+    const q =
+    query(
+
+        collection(
+            db,
+            "depositRequests"
+        ),
+
+        where(
+            "userId",
+            "==",
+            uid
+        )
+
+    );
+
+
+    onSnapshot(
+
+        q,
+
+        (snapshot) => {
+
+            box.innerHTML = "";
+
+
+            if(snapshot.empty){
+
+                box.innerHTML =
+                "এখনও কোনো Deposit Request নেই।";
+
+                return;
+
+            }
+
+
+            snapshot.forEach(
+                (item) => {
+
+                    const data =
+                    item.data();
+
+
+                    const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                    div.className =
+                    "request";
+
+
+                    div.innerHTML = `
+
+                    <b>Amount:</b>
+                    ৳${Number(
+                        data.amount || 0
+                    ).toFixed(2)}
+
+                    <br>
+
+                    <b>Transaction ID:</b>
+                    ${data.transactionId || "N/A"}
+
+                    <br>
+
+                    <b>Status:</b>
+                    ${data.status || "pending"}
+
+                    `;
+
+
+                    box.appendChild(
+                        div
+                    );
+
+                }
+            );
+
+        }
+
+    );
+
+}
+
+
+
+/* LOGOUT */
+
+window.logout =
+async function(){
+
+    await signOut(auth);
+
+    window.location.href =
+    "./index.html";
+
+};
+
+
+</script>
+
+</body>
+
+</html>    padding:22px;
     border-radius:15px;
     box-shadow:0 4px 15px rgba(0,0,0,.08);
 }
