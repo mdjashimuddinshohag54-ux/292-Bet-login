@@ -4,37 +4,588 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>292 Bet - Dashboard</title>
+<title>292 Bet - Member Dashboard</title>
 
 <style>
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f2f4f7;
+    padding: 0;
 }
 
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+}
+
+/* Loading */
+#loading {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+/* Dashboard */
+#dashboard {
+    display: none;
+}
+
+/* Header */
 .header {
-    background: #1976d2;
+    background: linear-gradient(135deg, #1976d2, #0d47a1);
     color: white;
     padding: 20px;
     text-align: center;
 }
 
-.container {
+.header h1 {
+    font-size: 28px;
+}
+
+.header p {
+    margin-top: 6px;
+    opacity: .9;
+}
+
+/* User */
+.user-box {
     max-width: 600px;
-    margin: 30px auto;
-    padding: 25px;
+    margin: 20px auto;
+    padding: 20px;
     background: white;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.12);
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.user-box h3 {
+    margin-bottom: 8px;
+}
+
+.user-email {
+    color: #555;
+    word-break: break-word;
+}
+
+/* Menu */
+.menu {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 15px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.menu-item {
+    background: white;
+    padding: 22px 10px;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    cursor: pointer;
+    transition: .2s;
+}
+
+.menu-item:hover {
+    transform: translateY(-3px);
+}
+
+.icon {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.menu-item h3 {
+    font-size: 16px;
+}
+
+/* Content */
+.content {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 15px 30px;
+}
+
+.section {
+    display: none;
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.section.active {
+    display: block;
+}
+
+.section h2 {
+    margin-bottom: 15px;
+}
+
+/* Forms */
+input,
+select {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
 }
 
 button {
     width: 100%;
     padding: 13px;
-    margin-top: 20px;
+    margin-top: 10px;
     border: none;
     border-radius: 8px;
+    background: #1976d2;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.logout {
+    background: #d32f2f;
+}
+
+/* Balance */
+.balance {
+    background: linear-gradient(135deg, #1565c0, #1976d2);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.balance small {
+    opacity: .9;
+}
+
+.balance h2 {
+    margin-top: 8px;
+    font-size: 30px;
+}
+
+/* Transactions */
+.transaction {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction:last-child {
+    border-bottom: none;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-size: 13px;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .menu {
+        gap: 10px;
+    }
+
+    .menu-item {
+        padding: 18px 5px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN CHECK -->
+<div id="loading">
+    Checking login...
+</div>
+
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+    <div class="header">
+        <h1>292 Bet</h1>
+        <p>Member Dashboard</p>
+    </div>
+
+
+    <!-- USER -->
+    <div class="user-box">
+
+        <h3>Welcome 👋</h3>
+
+        <p class="user-email" id="userEmail">
+            Loading...
+        </p>
+
+    </div>
+
+
+    <!-- MENU -->
+    <div class="menu">
+
+        <div class="menu-item"
+             onclick="showSection('account')">
+
+            <div class="icon">👤</div>
+
+            <h3>My Account</h3>
+
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showSection('dashboardHome')">
+
+            <div class="icon">📊</div>
+
+            <h3>Dashboard</h3>
+
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showSection('deposit')">
+
+            <div class="icon">💳</div>
+
+            <h3>Deposit</h3>
+
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showSection('withdraw')">
+
+            <div class="icon">💸</div>
+
+            <h3>Withdraw</h3>
+
+        </div>
+
+
+        <div class="menu-item"
+             onclick="showSection('transactions')">
+
+            <div class="icon">📜</div>
+
+            <h3>Transactions</h3>
+
+        </div>
+
+
+        <div class="menu-item"
+             onclick="logout()">
+
+            <div class="icon">🚪</div>
+
+            <h3>Logout</h3>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTENT -->
+    <div class="content">
+
+
+        <!-- Dashboard -->
+        <div id="dashboardHome"
+             class="section active">
+
+            <div class="balance">
+
+                <small>Account Balance</small>
+
+                <h2>৳ 0.00</h2>
+
+            </div>
+
+            <h2>Dashboard</h2>
+
+            <p>
+                Welcome to your member dashboard.
+            </p>
+
+        </div>
+
+
+        <!-- Account -->
+        <div id="account"
+             class="section">
+
+            <h2>👤 My Account</h2>
+
+            <p>
+                <strong>Email:</strong>
+            </p>
+
+            <p id="accountEmail">
+                Loading...
+            </p>
+
+            <button
+                class="logout"
+                onclick="logout()">
+
+                Logout
+
+            </button>
+
+        </div>
+
+
+        <!-- Deposit -->
+        <div id="deposit"
+             class="section">
+
+            <h2>💳 Deposit</h2>
+
+            <p>
+                Enter the amount you want to deposit.
+            </p>
+
+            <input
+                type="number"
+                id="depositAmount"
+                placeholder="Amount">
+
+            <button onclick="depositRequest()">
+                Submit Deposit Request
+            </button>
+
+            <p id="depositMessage"></p>
+
+        </div>
+
+
+        <!-- Withdraw -->
+        <div id="withdraw"
+             class="section">
+
+            <h2>💸 Withdraw</h2>
+
+            <p>
+                Enter the amount you want to withdraw.
+            </p>
+
+            <input
+                type="number"
+                id="withdrawAmount"
+                placeholder="Amount">
+
+            <button onclick="withdrawRequest()">
+                Submit Withdraw Request
+            </button>
+
+            <p id="withdrawMessage"></p>
+
+        </div>
+
+
+        <!-- Transactions -->
+        <div id="transactions"
+             class="section">
+
+            <h2>📜 Transactions</h2>
+
+            <div class="transaction">
+                No transactions yet.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        © 2026 292 Bet. All rights reserved.
+    </div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+/* Firebase Configuration */
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+
+    authDomain:
+    "bet-e114b.firebaseapp.com",
+
+    projectId:
+    "bet-e114b",
+
+    storageBucket:
+    "bet-e114b.firebasestorage.app",
+
+    messagingSenderId:
+    "464681620003",
+
+    appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796",
+
+    measurementId:
+    "G-NDVCWNKV8B"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+/* Login Protection */
+
+onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+
+        document.getElementById("loading")
+            .style.display = "none";
+
+        document.getElementById("dashboard")
+            .style.display = "block";
+
+        document.getElementById("userEmail")
+            .innerText =
+            "Logged in as: " + user.email;
+
+        document.getElementById("accountEmail")
+            .innerText =
+            user.email;
+
+    }
+
+    else {
+
+        window.location.href =
+            "./index.html";
+
+    }
+
+});
+
+
+/* Sections */
+
+window.showSection = function(sectionId) {
+
+    document
+        .querySelectorAll(".section")
+        .forEach(section => {
+
+            section.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById(sectionId)
+        .classList.add("active");
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+};
+
+
+/* Logout */
+
+window.logout = async function() {
+
+    await signOut(auth);
+
+    window.location.href =
+        "./index.html";
+
+};
+
+
+/* Deposit UI */
+
+window.depositRequest = function() {
+
+    const amount =
+        document.getElementById("depositAmount").value;
+
+    if (!amount || amount <= 0) {
+
+        document.getElementById("depositMessage")
+            .innerText =
+            "Please enter a valid amount.";
+
+        return;
+    }
+
+    document.getElementById("depositMessage")
+        .innerText =
+        "Deposit request submitted.";
+
+};
+
+
+/* Withdraw UI */
+
+window.withdrawRequest = function() {
+
+    const amount =
+        document.getElementById("withdrawAmount").value;
+
+    if (!amount || amount <= 0) {
+
+        document.getElementById("withdrawMessage")
+            .innerText =
+            "Please enter a valid amount.";
+
+        return;
+    }
+
+    document.getElementById("withdrawMessage")
+        .innerText =
+        "Withdraw request submitted.";
+
+};
+
+</script>
+
+</body>
+</html>    border-radius: 8px;
     background: #d32f2f;
     color: white;
     font-size: 16px;
