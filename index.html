@@ -1,426 +1,672 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>292 Bet - Login & Registration</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
+  <title>292 Bet - Login</title>
 
-body {
-  margin: 0;
-  background: #f2f4f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.container {
-  width: 100%;
-  max-width: 400px;
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 5px 25px rgba(0,0,0,.12);
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1976d2, #0d47a1);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-h2 {
-  text-align: center;
-  margin-bottom: 25px;
-}
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
 
-input {
-  width: 100%;
-  padding: 13px;
-  margin: 8px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 15px;
-}
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 28px 22px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+    }
 
-button {
-  width: 100%;
-  padding: 13px;
-  margin-top: 12px;
-  border: 0;
-  border-radius: 8px;
-  background: #1976d2;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+    .logo {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: #0d47a1;
+      margin-bottom: 5px;
+    }
 
-.link {
-  text-align: center;
-  margin-top: 18px;
-  color: #1976d2;
-  cursor: pointer;
-}
+    .subtitle {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
 
-.message {
-  text-align: center;
-  margin-top: 15px;
-}
+    h2 {
+      text-align: center;
+      margin: 0 0 20px;
+      color: #172033;
+    }
 
-#registerBox,
-#forgotBox,
-#userBox {
-  display: none;
-}
-</style>
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 7px 0;
+      border: 1px solid #d8dee8;
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #1976d2;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 9px;
+      background: #1976d2;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0d47a1;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .signup-btn {
+      background: #198754;
+    }
+
+    .signup-btn:hover {
+      background: #146c43;
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 9px;
+      text-align: center;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .success {
+      display: block;
+      background: #e8f5e9;
+      color: #176b3a;
+    }
+
+    .error {
+      display: block;
+      background: #ffebee;
+      color: #b71c1c;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0;
+      color: #999;
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 18px;
+      color: #888;
+      font-size: 12px;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 24px 17px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <h2>292 Bet Login</h2>
+    <div class="card">
 
-    <input
-      type="email"
-      id="loginEmail"
-      placeholder="Email Address">
+      <div class="logo">292 Bet</div>
 
-    <input
-      type="password"
-      id="loginPassword"
-      placeholder="Password">
+      <div class="subtitle">
+        Member Login & Registration
+      </div>
 
-    <button onclick="login()">Login</button>
+      <h2>🔐 Login</h2>
 
-    <div class="link" onclick="showRegister()">
-      Create New Account
+      <input
+        id="email"
+        type="email"
+        placeholder="Email Address"
+        autocomplete="email"
+      >
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+
+      <button
+        id="loginButton"
+        onclick="login()">
+        Login
+      </button>
+
+      <div class="divider">
+        অথবা
+      </div>
+
+      <button
+        class="signup-btn"
+        id="signupButton"
+        onclick="signup()">
+        নতুন Account তৈরি করুন
+      </button>
+
+      <div
+        id="message"
+        class="message">
+      </div>
+
+      <div class="footer">
+        © 2026 292 Bet
+      </div>
+
     </div>
 
-    <div class="link" onclick="showForgot()">
-      Forgot Password?
-    </div>
   </div>
 
 
-  <!-- REGISTRATION -->
-  <div id="registerBox">
-    <h2>Create Account</h2>
+  <script type="module">
 
-    <input
-      type="email"
-      id="registerEmail"
-      placeholder="Email Address">
+    /* ================================
+       FIREBASE IMPORT
+    ================================= */
 
-    <input
-      type="password"
-      id="registerPassword"
-      placeholder="Password">
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    <input
-      type="password"
-      id="confirmPassword"
-      placeholder="Confirm Password">
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    <button onclick="register()">Register</button>
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <div class="link" onclick="showLogin()">
-      Already have an account? Login
-    </div>
-  </div>
 
+    /* ================================
+       FIREBASE CONFIG
+    ================================= */
 
-  <!-- FORGOT PASSWORD -->
-  <div id="forgotBox">
-    <h2>Reset Password</h2>
+    const firebaseConfig = {
 
-    <input
-      type="email"
-      id="resetEmail"
-      placeholder="Enter your email">
+      apiKey:
+        "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
 
-    <button onclick="resetPassword()">
-      Send Reset Email
-    </button>
+      authDomain:
+        "bet-e114b.firebaseapp.com",
 
-    <div class="link" onclick="showLogin()">
-      Back to Login
-    </div>
-  </div>
+      projectId:
+        "bet-e114b",
 
+      storageBucket:
+        "bet-e114b.firebasestorage.app",
 
-  <!-- LOGGED IN -->
-  <div id="userBox">
-    <h2>Welcome to 292 Bet</h2>
+      messagingSenderId:
+        "464681620003",
 
-    <p id="userEmail"></p>
+      appId:
+        "1:464681620003:web:3169096c02b1d9ce3c5796",
 
-    <button onclick="logout()">
-      Logout
-    </button>
-  </div>
+      measurementId:
+        "G-NDVCWNKV8B"
+    };
 
-  <div class="message" id="message"></div>
 
-</div>
+    /* ================================
+       INITIALIZE FIREBASE
+    ================================= */
 
+    const app =
+      initializeApp(firebaseConfig);
 
-<script type="module">
+    const auth =
+      getAuth(app);
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    const db =
+      getFirestore(app);
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
-  onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+    let processing = false;
 
-const firebaseConfig = {
 
-  apiKey:
-  "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
+    /* ================================
+       MESSAGE FUNCTION
+    ================================= */
 
-  authDomain:
-  "bet-e114b.firebaseapp.com",
+    function showMessage(text, type) {
 
-  projectId:
-  "bet-e114b",
+      const message =
+        document.getElementById("message");
 
-  storageBucket:
-  "bet-e114b.firebasestorage.app",
+      message.className =
+        "message " + type;
 
-  messagingSenderId:
-  "464681620003",
+      message.innerHTML =
+        text;
+    }
 
-  appId:
-  "1:464681620003:web:3169096c02b1d9ce3c5796",
 
-  measurementId:
-  "G-NDVCWNKV8B"
-};
+    /* ================================
+       LOGIN
+    ================================= */
 
+    window.login = async function () {
 
-const app = initializeApp(firebaseConfig);
+      if (processing) return;
 
-const auth = getAuth(app);
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
 
+      const password =
+        document
+          .getElementById("password")
+          .value;
 
-function message(text, success = false) {
 
-  const m = document.getElementById("message");
+      if (!email) {
 
-  m.innerText = text;
+        showMessage(
+          "❌ Email লিখুন।",
+          "error"
+        );
 
-  m.style.color =
-    success ? "green" : "red";
-}
+        return;
+      }
 
 
-function hideAll() {
+      if (!password) {
 
-  document.getElementById("loginBox").style.display = "none";
+        showMessage(
+          "❌ Password লিখুন।",
+          "error"
+        );
 
-  document.getElementById("registerBox").style.display = "none";
+        return;
+      }
 
-  document.getElementById("forgotBox").style.display = "none";
 
-  document.getElementById("userBox").style.display = "none";
-}
+      processing = true;
 
+      const button =
+        document.getElementById(
+          "loginButton"
+        );
 
-window.showLogin = function() {
+      button.disabled = true;
 
-  hideAll();
+      button.innerText =
+        "Login হচ্ছে...";
 
-  document.getElementById("loginBox").style.display = "block";
-};
 
+      try {
 
-window.showRegister = function() {
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-  hideAll();
 
-  document.getElementById("registerBox").style.display = "block";
-};
+        showMessage(
+          "✅ Login সফল হয়েছে। Dashboard-এ নেওয়া হচ্ছে...",
+          "success"
+        );
 
 
-window.showForgot = function() {
+        setTimeout(() => {
 
-  hideAll();
+          window.location.href =
+            "./dashboard.html";
 
-  document.getElementById("forgotBox").style.display = "block";
-};
+        }, 700);
 
 
-window.register = async function() {
+      } catch (error) {
 
-  const email =
-    document.getElementById("registerEmail").value.trim();
+        console.error(error);
 
-  const password =
-    document.getElementById("registerPassword").value;
+        let text =
+          "❌ Login করা যায়নি।";
 
-  const confirm =
-    document.getElementById("confirmPassword").value;
 
+        if (
+          error.code ===
+          "auth/invalid-credential"
+        ) {
 
-  if (!email || !password || !confirm) {
+          text =
+            "❌ Email অথবা Password ভুল।";
 
-    message("Please fill all fields.");
+        }
 
-    return;
-  }
+        else if (
+          error.code ===
+          "auth/user-not-found"
+        ) {
 
+          text =
+            "❌ এই Email দিয়ে কোনো Account নেই।";
 
-  if (password !== confirm) {
+        }
 
-    message("Passwords do not match.");
+        else if (
+          error.code ===
+          "auth/wrong-password"
+        ) {
 
-    return;
-  }
+          text =
+            "❌ Password ভুল।";
 
+        }
 
-  if (password.length < 6) {
+        else if (
+          error.code ===
+          "auth/invalid-email"
+        ) {
 
-    message("Password must be at least 6 characters.");
+          text =
+            "❌ সঠিক Email Address দিন।";
 
-    return;
-  }
+        }
 
 
-  try {
+        showMessage(
+          text,
+          "error"
+        );
 
-    await createUserWithEmailAndPassword(
+
+      } finally {
+
+        processing = false;
+
+        button.disabled = false;
+
+        button.innerText =
+          "Login";
+      }
+    };
+
+
+    /* ================================
+       SIGN UP
+    ================================= */
+
+    window.signup = async function () {
+
+      if (processing) return;
+
+
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("password")
+          .value;
+
+
+      if (!email) {
+
+        showMessage(
+          "❌ Account তৈরি করতে Email লিখুন।",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!password) {
+
+        showMessage(
+          "❌ Password লিখুন।",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (password.length < 6) {
+
+        showMessage(
+          "❌ Password কমপক্ষে 6 অক্ষরের হতে হবে।",
+          "error"
+        );
+
+        return;
+      }
+
+
+      processing = true;
+
+
+      const button =
+        document.getElementById(
+          "signupButton"
+        );
+
+      button.disabled = true;
+
+      button.innerText =
+        "Account তৈরি হচ্ছে...";
+
+
+      try {
+
+        const userCredential =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        const user =
+          userCredential.user;
+
+
+        /* ================================
+           CREATE USER DOCUMENT
+        ================================= */
+
+        await setDoc(
+
+          doc(
+            db,
+            "users",
+            user.uid
+          ),
+
+          {
+            email:
+              user.email,
+
+            balance:
+              0,
+
+            status:
+              "active",
+
+            createdAt:
+              serverTimestamp()
+          }
+
+        );
+
+
+        showMessage(
+          "✅ Account সফলভাবে তৈরি হয়েছে। Dashboard-এ নেওয়া হচ্ছে...",
+          "success"
+        );
+
+
+        setTimeout(() => {
+
+          window.location.href =
+            "./dashboard.html";
+
+        }, 1000);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        let text =
+          "❌ Account তৈরি করা যায়নি।";
+
+
+        if (
+          error.code ===
+          "auth/email-already-in-use"
+        ) {
+
+          text =
+            "❌ এই Email দিয়ে ইতিমধ্যে Account আছে। Login করুন।";
+
+        }
+
+        else if (
+          error.code ===
+          "auth/invalid-email"
+        ) {
+
+          text =
+            "❌ সঠিক Email Address দিন।";
+
+        }
+
+        else if (
+          error.code ===
+          "auth/weak-password"
+        ) {
+
+          text =
+            "❌ Password আরও শক্তিশালী দিন।";
+
+        }
+
+
+        showMessage(
+          text,
+          "error"
+        );
+
+
+      } finally {
+
+        processing = false;
+
+        button.disabled = false;
+
+        button.innerText =
+          "নতুন Account তৈরি করুন";
+      }
+    };
+
+
+    /* ================================
+       ALREADY LOGGED IN
+    ================================= */
+
+    onAuthStateChanged(
       auth,
-      email,
-      password
+      (user) => {
+
+        if (user) {
+
+          window.location.href =
+            "./dashboard.html";
+
+        }
+
+      }
     );
 
-    message(
-      "Registration successful!",
-      true
-    );
 
-  } catch (error) {
+    /* ================================
+       ENTER KEY LOGIN
+    ================================= */
 
-    message(error.message);
-  }
-};
+    document
+      .getElementById("password")
+      .addEventListener(
+        "keydown",
+        (event) => {
 
+          if (
+            event.key === "Enter"
+          ) {
 
-window.login = async function() {
+            login();
 
-  const email =
-    document.getElementById("loginEmail").value.trim();
+          }
 
-  const password =
-    document.getElementById("loginPassword").value;
+        }
+      );
 
-
-  if (!email || !password) {
-
-    message("Please enter email and password.");
-
-    return;
-  }
-
-
-  try {
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-window.location.href = "./dashboard.html";
-
-    message(
-      "Login successful!",
-      true
-    );
-
-  } catch (error) {
-
-    message(error.message);
-  }
-};
-
-
-window.resetPassword = async function() {
-
-  const email =
-    document.getElementById("resetEmail").value.trim();
-
-
-  if (!email) {
-
-    message("Please enter your email.");
-
-    return;
-  }
-
-
-  try {
-
-    await sendPasswordResetEmail(
-      auth,
-      email
-    );
-
-    message(
-      "Password reset email sent.",
-      true
-    );
-
-  } catch (error) {
-
-    message(error.message);
-  }
-};
-
-
-window.logout = async function() {
-
-  try {
-
-    await signOut(auth);
-
-    showLogin();
-
-  } catch (error) {
-
-    message(error.message);
-  }
-};
-
-
-onAuthStateChanged(auth, (user) => {
-
-  if (user) {
-
-    hideAll();
-
-    document.getElementById("userBox").style.display = "block";
-
-    document.getElementById("userEmail").innerText =
-      "Logged in as: " + user.email;
-
-  } else {
-
-    showLogin();
-  }
-});
-
-</script>
+  </script>
 
 </body>
 </html>
