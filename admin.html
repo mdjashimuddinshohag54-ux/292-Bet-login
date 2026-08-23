@@ -1,1465 +1,903 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>292 Bet - Admin Panel</title>
 
 <style>
+*{box-sizing:border-box}
 
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f3f5f8;
-    color:#222;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#172033;
 }
 
 .header{
-    background:#1565c0;
-    color:white;
-    padding:22px;
-    text-align:center;
+  background:linear-gradient(135deg,#212121,#000);
+  color:#fff;
+  padding:22px 15px;
+  text-align:center;
+}
+
+.header h1{
+  margin:0 0 6px;
+  font-size:25px;
+}
+
+.header p{
+  margin:0;
+  font-size:13px;
+  opacity:.8;
 }
 
 .container{
-    max-width:700px;
-    margin:20px auto;
-    padding:0 15px 40px;
+  max-width:700px;
+  margin:18px auto;
+  padding:0 12px 35px;
 }
 
 .card{
-    background:white;
-    padding:18px;
-    margin-bottom:18px;
-    border-radius:14px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
+  background:#fff;
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 4px 16px rgba(0,0,0,.07);
 }
+
+h2{
+  font-size:19px;
+  margin:0 0 14px;
+}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.summary-box{
+  background:#f5f7fa;
+  border-radius:12px;
+  padding:14px 8px;
+  text-align:center;
+}
+
+.summary-box strong{
+  display:block;
+  font-size:24px;
+  margin-top:5px;
+}
+
+.pending-number{color:#f57c00}
+.approved-number{color:#198754}
+.rejected-number{color:#dc3545}
 
 .request{
-    border-left:5px solid #ff9800;
-    margin-top:12px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px;
+  margin-top:10px;
+  line-height:1.7;
+  background:#fafbfc;
 }
 
-.row{
-    margin:9px 0;
-    word-break:break-word;
-}
-
-.label{
-    font-weight:bold;
+.request b{
+  color:#333;
 }
 
 .status{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:20px;
-    background:#fff3cd;
-    color:#856404;
+  font-weight:bold;
 }
 
-.status.approved{
-    background:#d1e7dd;
-    color:#0f5132;
+.pending{
+  color:#f57c00;
 }
 
-.status.rejected{
-    background:#f8d7da;
-    color:#842029;
+.approved{
+  color:#198754;
+}
+
+.rejected{
+  color:#dc3545;
+}
+
+.processing{
+  color:#f57c00;
 }
 
 button{
-    width:100%;
-    border:0;
-    padding:12px;
-    margin-top:8px;
-    border-radius:8px;
-    color:white;
-    font-size:16px;
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:9px;
+  color:#fff;
+  font-size:15px;
+  cursor:pointer;
+  margin-top:8px;
 }
 
 .approve{
-    background:#198754;
+  background:#198754;
 }
 
 .reject{
-    background:#dc3545;
+  background:#dc3545;
+}
+
+.refresh{
+  background:#1976d2;
 }
 
 .logout{
-    background:#333;
+  background:#343a40;
 }
 
-.empty{
-    text-align:center;
-    color:#777;
-    padding:15px;
+button:disabled{
+  opacity:.55;
+}
+
+.message{
+  display:none;
+  padding:12px;
+  border-radius:9px;
+  margin-top:10px;
+  line-height:1.5;
+  font-size:14px;
+}
+
+.success{
+  display:block;
+  background:#e9f8ef;
+  color:#176b3a;
 }
 
 .error{
-    color:#d32f2f;
-    font-weight:bold;
+  display:block;
+  background:#ffebee;
+  color:#b71c1c;
 }
 
-</style>
+.login-card{
+  max-width:430px;
+  margin:50px auto;
+  padding:20px;
+}
 
+.hidden{
+  display:none;
+}
+
+.email{
+  word-break:break-all;
+  font-size:13px;
+  opacity:.85;
+}
+
+@media(max-width:500px){
+  .summary{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
-<div class="header">
+<header class="header">
+  <h1>292 Bet — Admin Panel</h1>
+  <p id="adminEmail">Checking Admin...</p>
+</header>
 
-<h1>Admin Dashboard</h1>
+<main class="container">
 
-<p>Payment Management</p>
+  <!-- SUMMARY -->
 
-</div>
+  <section class="card">
+    <h2>📊 Request Summary</h2>
 
+    <div class="summary">
 
-<div class="container">
+      <div class="summary-box">
+        Pending
+        <strong id="pendingCount" class="pending-number">
+          0
+        </strong>
+      </div>
 
-<div id="message">
-Checking admin access...
-</div>
+      <div class="summary-box">
+        Approved
+        <strong id="approvedCount" class="approved-number">
+          0
+        </strong>
+      </div>
 
+      <div class="summary-box">
+        Rejected
+        <strong id="rejectedCount" class="rejected-number">
+          0
+        </strong>
+      </div>
 
-<div class="card">
+    </div>
 
-<h2>💳 Deposit Requests</h2>
+    <button
+      class="refresh"
+      onclick="loadDepositRequests()">
+      🔄 Refresh Requests
+    </button>
 
-<div id="depositRequests">
-
-<div class="empty">
-Loading...
-</div>
-
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>💸 Withdraw / Refund Requests</h2>
-
-<div id="withdrawRequests">
-
-<div class="empty">
-Loading...
-</div>
-
-</div>
-
-</div>
+  </section>
 
 
-<button
-class="logout"
-onclick="logout()">
+  <!-- DEPOSIT REQUESTS -->
 
-🚪 Logout
+  <section class="card">
 
-</button>
+    <h2>💳 Deposit Requests</h2>
 
-</div>
+    <div id="depositRequests">
+      Loading...
+    </div>
+
+  </section>
+
+
+  <!-- WITHDRAW REQUESTS -->
+
+  <section class="card">
+
+    <h2>💸 Withdraw Requests</h2>
+
+    <div id="withdrawRequests">
+      Loading...
+    </div>
+
+  </section>
+
+
+  <button
+    class="logout"
+    onclick="logout()">
+    🚪 Admin Logout
+  </button>
+
+</main>
 
 
 <script type="module">
 
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-    getFirestore,
-    collection,
-    onSnapshot,
-    doc,
-    updateDoc
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  increment,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+
+/* =========================================
+   FIREBASE CONFIG
+========================================= */
 
 const firebaseConfig = {
 
-    apiKey:
+  apiKey:
     "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
 
-    authDomain:
+  authDomain:
     "bet-e114b.firebaseapp.com",
 
-    projectId:
+  projectId:
     "bet-e114b",
 
-    storageBucket:
+  storageBucket:
     "bet-e114b.firebasestorage.app",
 
-    messagingSenderId:
+  messagingSenderId:
     "464681620003",
 
-    appId:
-    "1:464681620003:web:3169096c02b1d9ce3c5796",
-
-    measurementId:
-    "G-NDVCWNKV8B"
+  appId:
+    "1:464681620003:web:3169096c02b1d9ce3c5796"
 
 };
 
+
+/* =========================================
+   ADMIN UID
+========================================= */
+
+const ADMIN_UID =
+  "0J0TIrsSBjg6XEr0tyIl3oczWyS2";
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
 
 const app =
-initializeApp(firebaseConfig);
-
+  initializeApp(firebaseConfig);
 
 const auth =
-getAuth(app);
-
+  getAuth(app);
 
 const db =
-getFirestore(app);
+  getFirestore(app);
 
 
-const ADMIN_EMAIL =
-"mdjashimuddinshohag54@gmail.com";
-
-
-const message =
-document.getElementById("message");
-
+/* =========================================
+   AUTH CHECK
+========================================= */
 
 onAuthStateChanged(
-auth,
-(user) => {
+  auth,
+  async (user) => {
 
-    if(!user){
+    if (!user) {
 
-        window.location.href =
-        "./index.html";
+      document.body.innerHTML = `
+        <div class="card login-card">
+          <h2>🔐 Admin Login Required</h2>
+          <p>Admin Panel ব্যবহার করার আগে আপনার Admin account দিয়ে Login করুন।</p>
+          <button class="refresh"
+            onclick="location.href='./index.html'">
+            Login Page
+          </button>
+        </div>
+      `;
 
-        return;
+      return;
     }
 
 
-    if(user.email !== ADMIN_EMAIL){
+    /* ADMIN UID CHECK */
 
-        message.className =
-        "error";
+    if (user.uid !== ADMIN_UID) {
 
-        message.innerText =
-        "❌ Admin access নেই।";
+      document.body.innerHTML = `
+        <div class="card login-card">
+          <h2>⛔ Access Denied</h2>
+          <p>
+            এই account-এর Admin Panel ব্যবহারের অনুমতি নেই।
+          </p>
+          <button class="logout"
+            onclick="logout()">
+            Logout
+          </button>
+        </div>
+      `;
 
+      await signOut(auth);
 
-        signOut(auth);
-
-        return;
+      return;
     }
 
 
-    message.innerText =
-    "✅ Admin access granted.";
+    /* ADMIN VERIFIED */
 
-
-    loadDeposits();
-
-    loadWithdraws();
-
-});
-
-
-function loadDeposits(){
-
-    const box =
     document.getElementById(
-        "depositRequests"
+      "adminEmail"
+    ).textContent =
+      "Admin: " + user.email;
+
+
+    loadDepositRequests();
+
+    loadWithdrawRequests();
+
+  }
+);
+
+
+/* =========================================
+   LOAD DEPOSIT REQUESTS
+========================================= */
+
+window.loadDepositRequests =
+async function(){
+
+  const box =
+    document.getElementById(
+      "depositRequests"
     );
 
+  box.innerHTML =
+    "Loading...";
 
-    onSnapshot(
 
+  try {
+
+    const snapshot =
+      await getDocs(
         collection(
-            db,
-            "depositRequests"
-        ),
-
-        (snapshot) => {
-
-            box.innerHTML = "";
+          db,
+          "depositRequests"
+        )
+      );
 
 
-            if(snapshot.empty){
-
-                box.innerHTML =
-                `<div class="empty">
-                কোনো Deposit Request নেই।
-                </div>`;
-
-                return;
-            }
+    let pending = 0;
+    let approved = 0;
+    let rejected = 0;
 
 
-            snapshot.forEach(
-            (item) => {
-
-                const data =
-                item.data();
+    box.innerHTML = "";
 
 
-                box.innerHTML += `
+    if(snapshot.empty){
 
-                <div class="card request">
+      box.innerHTML =
+        "কোনো Deposit Request নেই।";
 
-                    <div class="row">
-                    <span class="label">
-                    Customer:
-                    </span>
-
-                    ${data.userEmail || "N/A"}
-                    </div>
+    }
 
 
-                    <div class="row">
-                    <span class="label">
-                    Amount:
-                    </span>
+    snapshot.forEach(
+      item => {
 
-                    ৳${data.amount || 0}
-                    </div>
+        const data =
+          item.data();
 
+        const id =
+          item.id;
 
-                    <div class="row">
-                    <span class="label">
-                    Transaction ID:
-                    </span>
-
-                    ${data.transactionId || "N/A"}
-                    </div>
+        const status =
+          data.status || "pending";
 
 
-                    <div class="row">
+        if(status === "pending")
+          pending++;
 
-                    <span class="label">
-                    Status:
-                    </span>
+        if(status === "approved")
+          approved++;
 
-                    <span class="status
-                    ${data.status || "pending"}">
-
-                    ${data.status || "pending"}
-
-                    </span>
-
-                    </div>
+        if(status === "rejected")
+          rejected++;
 
 
-                    ${
-                    data.status === "pending"
+        const div =
+          document.createElement(
+            "div"
+          );
 
-                    ?
-
-                    `
-
-                    <button
-                    class="approve"
-                    onclick="changeDeposit(
-                    '${item.id}',
-                    'approved'
-                    )">
-
-                    ✅ Approve
-
-                    </button>
+        div.className =
+          "request";
 
 
-                    <button
-                    class="reject"
-                    onclick="changeDeposit(
-                    '${item.id}',
-                    'rejected'
-                    )">
+        div.innerHTML = `
 
-                    ❌ Reject
+          <b>👤 User Email:</b>
+          ${escapeHtml(data.userEmail || "N/A")}
+          <br>
 
-                    </button>
+          <b>💰 Amount:</b>
+          ৳${Number(data.amount || 0).toFixed(2)}
+          <br>
 
-                    `
+          <b>🧾 Transaction ID:</b>
+          ${escapeHtml(data.transactionId || "N/A")}
+          <br>
 
-                    :
+          <b>📌 Status:</b>
+          <span class="status ${escapeHtml(status)}">
+            ${escapeHtml(status)}
+          </span>
 
-                    `<p>
-                    এই request process করা হয়েছে।
-                    </p>`
-                    }
+        `;
 
-                </div>
 
-                `;
+        if(status === "pending"){
 
-            });
+          const approve =
+            document.createElement(
+              "button"
+            );
 
-        },
+          approve.className =
+            "approve";
 
-        (error) => {
+          approve.textContent =
+            "✅ Approve & Add Balance";
 
-            console.error(error);
+          approve.onclick =
+            () =>
+              approveDeposit(
+                id,
+                data.userId,
+                Number(data.amount || 0)
+              );
 
-            box.innerHTML =
-            `<div class="empty error">
 
-            ❌ Deposit requests load করা যায়নি।
+          const reject =
+            document.createElement(
+              "button"
+            );
 
-            <br><br>
+          reject.className =
+            "reject";
 
-            ${error.message}
+          reject.textContent =
+            "❌ Reject";
 
-            </div>`;
+          reject.onclick =
+            () =>
+              rejectDeposit(id);
+
+
+          div.appendChild(
+            approve
+          );
+
+          div.appendChild(
+            reject
+          );
 
         }
 
+
+        box.appendChild(div);
+
+      }
     );
 
-}
+
+    document.getElementById(
+      "pendingCount"
+    ).textContent =
+      pending;
+
+    document.getElementById(
+      "approvedCount"
+    ).textContent =
+      approved;
+
+    document.getElementById(
+      "rejectedCount"
+    ).textContent =
+      rejected;
 
 
-window.changeDeposit =
-async function(id,status){
+  } catch(error){
 
-    try{
+    console.error(error);
 
-        await updateDoc(
+    box.innerHTML =
+      "❌ Request load করা যায়নি। Firebase Rules পরীক্ষা করুন।";
 
-            doc(
-                db,
-                "depositRequests",
-                id
-            ),
-
-            {
-                status:status
-            }
-
-        );
-
-
-        alert(
-        "Deposit "
-        + status
-        + " হয়েছে।"
-        );
-
-    }
-
-    catch(error){
-
-        alert(
-        "Update failed: "
-        + error.message
-        );
-
-    }
+  }
 
 };
 
 
-function loadWithdraws(){
+/* =========================================
+   APPROVE DEPOSIT
+========================================= */
 
-    const box =
-    document.getElementById(
-        "withdrawRequests"
+async function approveDeposit(
+  requestId,
+  userId,
+  amount
+){
+
+  if(!confirm(
+    "এই Deposit Approve করলে ৳" +
+    amount +
+    " User-এর Balance-এ যোগ হবে।\n\nContinue?"
+  )){
+    return;
+  }
+
+
+  try {
+
+
+    /* USER DOCUMENT */
+
+    const userRef =
+      doc(
+        db,
+        "users",
+        userId
+      );
+
+
+    const userSnap =
+      await getDoc(
+        userRef
+      );
+
+
+    if(!userSnap.exists()){
+
+      alert(
+        "❌ User account পাওয়া যায়নি।"
+      );
+
+      return;
+    }
+
+
+    /* ADD BALANCE */
+
+    await updateDoc(
+      userRef,
+      {
+        balance:
+          increment(amount)
+      }
     );
 
 
-    onSnapshot(
-
-        collection(
-            db,
-            "withdrawRequests"
-        ),
-
-        (snapshot) => {
-
-            box.innerHTML = "";
-
-
-            if(snapshot.empty){
-
-                box.innerHTML =
-                `<div class="empty">
-
-                কোনো Withdraw/Refund Request নেই।
-
-                </div>`;
-
-                return;
-            }
-
-
-            snapshot.forEach(
-            (item) => {
-
-                const data =
-                item.data();
-
-
-                box.innerHTML += `
-
-                <div class="card request">
-
-                    <div class="row">
-
-                    <span class="label">
-                    Customer:
-                    </span>
-
-                    ${data.userEmail || "N/A"}
-
-                    </div>
-
-
-                    <div class="row">
-
-                    <span class="label">
-                    Amount:
-                    </span>
-
-                    ৳${data.amount || 0}
-
-                    </div>
-
-
-                    <div class="row">
-
-                    <span class="label">
-                    Number:
-                    </span>
-
-                    ${data.paymentNumber || "N/A"}
-
-                    </div>
-
-
-                    <div class="row">
-
-                    <span class="label">
-                    Status:
-                    </span>
-
-                    <span class="status
-                    ${data.status || "pending"}">
-
-                    ${data.status || "pending"}
-
-                    </span>
-
-                    </div>
-
-
-                    ${
-                    data.status === "pending"
-
-                    ?
-
-                    `
-
-                    <button
-                    class="approve"
-                    onclick="changeWithdraw(
-                    '${item.id}',
-                    'approved'
-                    )">
-
-                    ✅ Approve
-
-                    </button>
-
-
-                    <button
-                    class="reject"
-                    onclick="changeWithdraw(
-                    '${item.id}',
-                    'rejected'
-                    )">
-
-                    ❌ Reject
-
-                    </button>
-
-                    `
-
-                    :
-
-                    `<p>
-                    এই request process করা হয়েছে।
-                    </p>`
-
-                    }
-
-                </div>
-
-                `;
-
-            });
-
-        },
-
-        (error) => {
-
-            console.error(error);
-
-            box.innerHTML =
-            `<div class="empty error">
-
-            ❌ Withdraw requests load করা যায়নি।
-
-            <br><br>
-
-            ${error.message}
-
-            </div>`;
-
-        }
-
+    /* UPDATE REQUEST */
+
+    await updateDoc(
+      doc(
+        db,
+        "depositRequests",
+        requestId
+      ),
+      {
+        status:
+          "approved",
+
+        approvedAt:
+          serverTimestamp(),
+
+        approvedBy:
+          auth.currentUser.uid
+      }
     );
+
+
+    alert(
+      "✅ Deposit Approved!\n\n" +
+      "৳" +
+      amount +
+      " User-এর Balance-এ যোগ হয়েছে।"
+    );
+
+
+    loadDepositRequests();
+
+
+  } catch(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Approve করা যায়নি।\n\n" +
+      "Firebase Firestore Rules পরীক্ষা করুন।"
+    );
+
+  }
 
 }
 
 
-window.changeWithdraw =
-async function(id,status){
+/* =========================================
+   REJECT DEPOSIT
+========================================= */
 
-    try{
+async function rejectDeposit(
+  requestId
+){
 
-        await updateDoc(
-
-            doc(
-                db,
-                "withdrawRequests",
-                id
-            ),
-
-            {
-                status:status
-            }
-
-        );
+  if(!confirm(
+    "এই Deposit Request Reject করবেন?"
+  )){
+    return;
+  }
 
 
-        alert(
-        "Withdraw request "
-        + status
-        + " হয়েছে।"
-        );
+  try {
+
+    await updateDoc(
+
+      doc(
+        db,
+        "depositRequests",
+        requestId
+      ),
+
+      {
+        status:
+          "rejected",
+
+        rejectedAt:
+          serverTimestamp(),
+
+        rejectedBy:
+          auth.currentUser.uid
+      }
+
+    );
+
+
+    alert(
+      "❌ Deposit Request Rejected."
+    );
+
+
+    loadDepositRequests();
+
+
+  } catch(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Reject করা যায়নি।"
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD WITHDRAW REQUESTS
+========================================= */
+
+async function loadWithdrawRequests(){
+
+  const box =
+    document.getElementById(
+      "withdrawRequests"
+    );
+
+
+  box.innerHTML =
+    "Loading...";
+
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "withdrawRequests"
+        )
+      );
+
+
+    box.innerHTML = "";
+
+
+    if(snapshot.empty){
+
+      box.innerHTML =
+        "কোনো Withdraw Request নেই।";
+
+      return;
 
     }
 
-    catch(error){
 
-        alert(
-        "Update failed: "
-        + error.message
+    snapshot.forEach(
+      item => {
+
+        const data =
+          item.data();
+
+        const id =
+          item.id;
+
+        const status =
+          data.status || "pending";
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "request";
+
+
+        div.innerHTML = `
+
+          <b>👤 User:</b>
+          ${escapeHtml(data.userEmail || "N/A")}
+          <br>
+
+          <b>💰 Amount:</b>
+          ৳${Number(data.amount || 0).toFixed(2)}
+          <br>
+
+          <b>💳 Method:</b>
+          ${escapeHtml(data.method || "N/A")}
+          <br>
+
+          <b>📱 Number:</b>
+          ${escapeHtml(data.number || "N/A")}
+          <br>
+
+          <b>📌 Status:</b>
+          <span class="status ${escapeHtml(status)}">
+            ${escapeHtml(status)}
+          </span>
+
+        `;
+
+
+        box.appendChild(
+          div
         );
 
-    }
+      }
+    );
 
-};
 
+  } catch(error){
+
+    console.error(error);
+
+    box.innerHTML =
+      "❌ Withdraw Request load করা যায়নি।";
+
+  }
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
 
 window.logout =
 async function(){
 
-    await signOut(auth);
+  await signOut(auth);
 
-    window.location.href =
+  location.href =
     "./index.html";
 
 };
 
 
-</script>
-
-</body>
-
-</html>
-.card{
-    background:white;
-    padding:18px;
-    margin-bottom:15px;
-    border-radius:14px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.card h3{
-    margin-top:0;
-}
-
-.request{
-    border-left:5px solid #ff9800;
-}
-
-.row{
-    margin:9px 0;
-    word-break:break-word;
-}
-
-.label{
-    font-weight:bold;
-}
-
-.status{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:20px;
-    font-size:13px;
-    background:#fff3cd;
-    color:#856404;
-}
-
-.status.approved{
-    background:#d1e7dd;
-    color:#0f5132;
-}
-
-.status.rejected{
-    background:#f8d7da;
-    color:#842029;
-}
-
-button{
-    width:100%;
-    border:0;
-    border-radius:8px;
-    padding:12px;
-    color:white;
-    font-size:15px;
-    cursor:pointer;
-    margin-top:8px;
-}
-
-.approve{
-    background:#198754;
-}
-
-.reject{
-    background:#dc3545;
-}
-
-.logout{
-    background:#333;
-}
-
-.empty{
-    text-align:center;
-    color:#777;
-    padding:20px;
-}
-
-#error{
-    color:#d32f2f;
-    font-weight:bold;
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<div class="header">
-
-<h1>Admin Dashboard</h1>
-
-<p>Payment Management</p>
-
-</div>
-
-
-<div class="container">
-
-
-<div id="message">
-Checking admin access...
-</div>
-
-
-<!-- DEPOSIT -->
-
-<div class="card">
-
-<h2>💳 Deposit Requests</h2>
-
-<div id="depositRequests">
-
-<div class="empty">
-Loading...
-</div>
-
-</div>
-
-</div>
-
-
-<!-- WITHDRAW -->
-
-<div class="card">
-
-<h2>💸 Withdraw / Refund Requests</h2>
-
-<div id="withdrawRequests">
-
-<div class="empty">
-Loading...
-</div>
-
-</div>
-
-</div>
-
-
-<button
-class="logout"
-onclick="logout()">
-
-🚪 Logout
-
-</button>
-
-
-</div>
-
-
-
-<script type="module">
-
-
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-
-import {
-    getFirestore,
-    collection,
-    query,
-    orderBy,
-    onSnapshot,
-    doc,
-    updateDoc
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-
-/* Firebase */
-
-const firebaseConfig = {
-
-    apiKey:
-    "AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",
-
-    authDomain:
-    "bet-e114b.firebaseapp.com",
-
-    projectId:
-    "bet-e114b",
-
-    storageBucket:
-    "bet-e114b.firebasestorage.app",
-
-    messagingSenderId:
-    "464681620003",
-
-    appId:
-    "1:464681620003:web:3169096c02b1d9ce3c5796",
-
-    measurementId:
-    "G-NDVCWNKV8B"
-
-};
-
-
-const app =
-    initializeApp(firebaseConfig);
-
-const auth =
-    getAuth(app);
-
-const db =
-    getFirestore(app);
-
-
-
-/* ADMIN EMAIL */
-
-const ADMIN_EMAIL =
-    "mdjashimuddinshohag54@gmail.com";
-
-
-const message =
-    document.getElementById("message");
-
-
-
-/* LOGIN + ADMIN CHECK */
-
-onAuthStateChanged(
-    auth,
-    (user) => {
-
-        if(!user){
-
-            window.location.href =
-                "./index.html";
-
-            return;
-        }
-
-
-        if(user.email !== ADMIN_EMAIL){
-
-            message.id = "error";
-
-            message.innerText =
-                "❌ এই account-এর Admin access নেই।";
-
-
-            setTimeout(
-                async () => {
-
-                    await signOut(auth);
-
-                    window.location.href =
-                        "./index.html";
-
-                },
-                2000
-            );
-
-            return;
-        }
-
-
-        message.innerText =
-            "✅ Admin access granted.";
-
-        loadDeposits();
-
-        loadWithdraws();
-
-    }
-);
-
-
-
-/* DEPOSIT REQUESTS */
-
-function loadDeposits(){
-
-    const box =
-        document.getElementById(
-            "depositRequests"
-        );
-
-
-    const q =
-        query(
-            collection(
-                db,
-                "depositRequests"
-            ),
-            orderBy(
-                "createdAt",
-                "desc"
-            )
-        );
-
-
-    onSnapshot(
-        q,
-        (snapshot) => {
-
-            box.innerHTML = "";
-
-
-            if(snapshot.empty){
-
-                box.innerHTML =
-                    `<div class="empty">
-                    কোনো Deposit Request নেই।
-                    </div>`;
-
-                return;
-            }
-
-
-            snapshot.forEach(
-                item => {
-
-                    const data =
-                        item.data();
-
-
-                    box.appendChild(
-                        createRequestCard(
-                            item.id,
-                            data,
-                            "deposit"
-                        )
-                    );
-
-                }
-            );
-
-        },
-
-        error => {
-
-            console.error(error);
-
-            box.innerHTML =
-                `<div class="empty">
-                Deposit requests load করা যায়নি।
-                </div>`;
-
-        }
-    );
-
-}
-
-
-
-/* WITHDRAW REQUESTS */
-
-function loadWithdraws(){
-
-    const box =
-        document.getElementById(
-            "withdrawRequests"
-        );
-
-
-    const q =
-        query(
-            collection(
-                db,
-                "withdrawRequests"
-            ),
-            orderBy(
-                "createdAt",
-                "desc"
-            )
-        );
-
-
-    onSnapshot(
-        q,
-        (snapshot) => {
-
-            box.innerHTML = "";
-
-
-            if(snapshot.empty){
-
-                box.innerHTML =
-                    `<div class="empty">
-                    কোনো Withdraw/Refund Request নেই।
-                    </div>`;
-
-                return;
-            }
-
-
-            snapshot.forEach(
-                item => {
-
-                    const data =
-                        item.data();
-
-
-                    box.appendChild(
-                        createRequestCard(
-                            item.id,
-                            data,
-                            "withdraw"
-                        )
-                    );
-
-                }
-            );
-
-        },
-
-        error => {
-
-            console.error(error);
-
-            box.innerHTML =
-                `<div class="empty">
-                Withdraw requests load করা যায়নি।
-                </div>`;
-
-        }
-    );
-
-}
-
-
-
-/* CREATE CARD */
-
-function createRequestCard(
-    id,
-    data,
-    type
-){
-
-    const card =
-        document.createElement(
-            "div"
-        );
-
-
-    card.className =
-        "card request";
-
-
-    const status =
-        data.status || "pending";
-
-
-    let extra = "";
-
-
-    if(type === "deposit"){
-
-        extra = `
-
-        <div class="row">
-
-            <span class="label">
-            Transaction ID:
-            </span>
-
-            ${escapeHtml(
-                data.transactionId || "N/A"
-            )}
-
-        </div>
-
-        `;
-
-    }
-
-
-    if(type === "withdraw"){
-
-        extra = `
-
-        <div class="row">
-
-            <span class="label">
-            Payment Number:
-            </span>
-
-            ${escapeHtml(
-                data.paymentNumber || "N/A"
-            )}
-
-        </div>
-
-        `;
-
-    }
-
-
-    card.innerHTML = `
-
-        <h3>
-        ${
-            type === "deposit"
-            ? "💳 Deposit"
-            : "💸 Withdraw / Refund"
-        }
-        </h3>
-
-
-        <div class="row">
-
-            <span class="label">
-            Customer:
-            </span>
-
-            ${escapeHtml(
-                data.userEmail || "N/A"
-            )}
-
-        </div>
-
-
-        <div class="row">
-
-            <span class="label">
-            Amount:
-            </span>
-
-            ৳${Number(
-                data.amount || 0
-            ).toFixed(2)}
-
-        </div>
-
-
-        ${extra}
-
-
-        <div class="row">
-
-            <span class="label">
-            Status:
-            </span>
-
-            <span class="status ${status}">
-
-                ${escapeHtml(status)}
-
-            </span>
-
-        </div>
-
-
-        ${
-            status === "pending"
-
-            ?
-
-            `
-
-            <button
-            class="approve"
-            data-id="${id}"
-            data-type="${type}"
-            data-status="approved">
-
-            ✅ Approve
-
-            </button>
-
-
-            <button
-            class="reject"
-            data-id="${id}"
-            data-type="${type}"
-            data-status="rejected">
-
-            ❌ Reject
-
-            </button>
-
-            `
-
-            :
-
-            `<div class="row">
-            এই request ইতিমধ্যে process করা হয়েছে।
-            </div>`
-        }
-
-    `;
-
-
-    return card;
-
-}
-
-
-
-/* BUTTON HANDLER */
-
-document.addEventListener(
-    "click",
-    async event => {
-
-        const button =
-            event.target.closest(
-                "button[data-status]"
-            );
-
-
-        if(!button){
-            return;
-        }
-
-
-        const id =
-            button.dataset.id;
-
-
-        const type =
-            button.dataset.type;
-
-
-        const status =
-            button.dataset.status;
-
-
-        await changeStatus(
-            id,
-            type,
-            status
-        );
-
-    }
-);
-
-
-
-/* APPROVE / REJECT */
-
-async function changeStatus(
-    id,
-    type,
-    status
-){
-
-    const collectionName =
-        type === "deposit"
-        ? "depositRequests"
-        : "withdrawRequests";
-
-
-    const actionText =
-        status === "approved"
-        ? "Approve"
-        : "Reject";
-
-
-    if(!confirm(
-        "আপনি কি এই request-টি "
-        + actionText
-        + " করতে চান?"
-    )){
-
-        return;
-
-    }
-
-
-    try{
-
-        await updateDoc(
-
-            doc(
-                db,
-                collectionName,
-                id
-            ),
-
-            {
-                status: status
-            }
-
-        );
-
-
-        alert(
-            "Request "
-            + status
-            + " হয়েছে।"
-        );
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        alert(
-            "Request update করা যায়নি।"
-        );
-
-    }
-
-}
-
-
-
-/* LOGOUT */
-
-window.logout =
-async function(){
-
-    await signOut(auth);
-
-    window.location.href =
-        "./index.html";
-
-};
-
-
-
-/* HTML SECURITY */
+/* =========================================
+   HTML SECURITY
+========================================= */
 
 function escapeHtml(value){
 
-    return String(value)
+  return String(value)
+    .replace(
+      /[&<>'"]/g,
+      char => ({
 
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "'":"&#39;",
+        '"':"&quot;"
 
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+      }[char])
+    );
 
 }
 
-
 </script>
 
-
 </body>
-
 </html>
