@@ -16,7 +16,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
 button{width:100%;padding:13px;border:0;border-radius:9px;color:#fff;background:#1976d2;font-size:15px;cursor:pointer;margin-top:8px}
 button:disabled{opacity:.55}.active{background:#0d47a1!important}.green{background:#198754}.red{background:#dc3545}.gray{background:#6c757d}.dark{background:#343a40}
 .section{display:none}.section.show{display:block}h2{font-size:19px;margin:0 0 12px}p{line-height:1.55;color:#667085}
-.info{background:#f1f6ff;border-left:4px solid #1976d2;border-radius:8px;padding:12px;line-height:1.7;margin-bottom:10px}
+.info{background:#f1f6ff;border-left:4px solid #1976d2;border-radius:8px;padding:12px;line-height:1.7;margin-bottom:10px}.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.payment-option{border:2px solid #eee;border-radius:12px;padding:12px;text-align:center;cursor:pointer;background:#fff;color:#222;font-weight:bold}.payment-option.nagad{border-color:#f58220;color:#f58220}.payment-option.bkash{border-color:#e2136e;color:#e2136e}.payment-option.selected{box-shadow:0 0 0 2px currentColor;background:#fff7f0}
 input,select{width:100%;padding:13px;margin:7px 0;border:1px solid #d8dee8;border-radius:9px;font-size:15px;background:#fff}
 input:focus,select:focus{outline:none;border-color:#1976d2}
 .message{display:none;padding:11px;border-radius:9px;margin-top:10px;line-height:1.5;font-size:14px}.success{display:block;background:#e9f8ef;color:#176b3a}.error{display:block;background:#ffebee;color:#b71c1c}
@@ -41,7 +41,8 @@ input:focus,select:focus{outline:none;border-color:#1976d2}
   </section>  <section id="deposit" class="card section show">
     <h2>💳 Deposit</h2>
     <p>একবারই Payment Number দেখানো হবে। টাকা পাঠানোর পর Amount ও Transaction ID দিন।</p>
-    <div class="info"><b>Nagad / bKash Payment Number</b><br><strong id="paymentNumber">01720159859</strong><br><small>এই নম্বরে শুধু Send Money গ্রহণ করা হয়।</small><button type="button" class="gray" onclick="copyPaymentNumber()">📋 Number Copy</button></div>
+    <div class="payment-options"><div id="nagadOption" class="payment-option nagad" onclick="selectPayment('Nagad',this)">🟠 Nagad</div><div id="bkashOption" class="payment-option bkash" onclick="selectPayment('bKash',this)">🔴 bKash</div></div>
+    <div class="info"><b id="paymentTitle">Nagad Payment Number</b><br><strong id="paymentNumber">01720159859</strong><br><small>এই নম্বরে শুধু Send Money গ্রহণ করা হয়।</small><button type="button" class="gray" onclick="copyPaymentNumber()">📋 Number Copy</button></div>
     <input id="depositAmount" type="number" min="1" placeholder="Amount (৳)">
     <input id="transactionId" type="text" placeholder="Transaction ID">
     <button id="depositButton" class="green" onclick="submitDeposit()">জমা দিন</button>
@@ -62,7 +63,7 @@ input:focus,select:focus{outline:none;border-color:#1976d2}
     <h2>👤 My Account</h2>
     <div class="profile-row"><span class="label">Email</span><span id="profileEmail" class="value">-</span></div>
     <div class="profile-row"><span class="label">Available Balance</span><span class="value">৳ <span id="profileBalance">0.00</span></span></div>
-    <button class="gray" onclick="goHome()">🔙 মূল ওয়েবসাইটে ফিরে যান</button>
+    <button class="green" onclick="goHome()">🔙 মূল ওয়েবসাইটে ফিরে যান</button>
   </section>  <section class="card">
     <h2>📋 Deposit History</h2>
     <div id="depositHistory">লোড হচ্ছে...</div>
@@ -117,7 +118,10 @@ window.submitWithdraw=async()=>{
 };
 
 function show(el,text,ok){el.className='message '+(ok?'success':'error');el.textContent=text;}
-window.copyPaymentNumber=async()=>{const n=document.getElementById('paymentNumber').textContent.trim();try{await navigator.clipboard.writeText(n);show(document.getElementById('depositMessage'),'✅ Payment Number কপি হয়েছে।',true);}catch(e){show(document.getElementById('depositMessage'),'Payment Number: '+n,true);}};
+let selectedPayment='Nagad';
+window.selectPayment=(method,el)=>{selectedPayment=method;document.querySelectorAll('.payment-option').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');document.getElementById('paymentTitle').textContent=method+' Payment Number';document.getElementById('paymentNumber').textContent='01720159859';};
+document.getElementById('nagadOption').classList.add('selected');
+window.copyPaymentNumber=async()=>{const n=document.getElementById('paymentNumber').textContent.trim();try{await navigator.clipboard.writeText(n);show(document.getElementById('depositMessage'),'✅ '+selectedPayment+' Payment Number কপি হয়েছে।',true);}catch(e){show(document.getElementById('depositMessage'),'Payment Number: '+n,true);}};
 function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 window.logout=async()=>{await signOut(auth);location.href='./index.html';};
 window.goHome=()=>{location.href='https://sites.google.com/';};
