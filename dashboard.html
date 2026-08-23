@@ -1,113 +1,60 @@
-<!DOCTYPE html>
-<html lang="bn">
-
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>My Account Dashboard</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Member Dashboard</title>
 <style>
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f5f5f5;
-    color:#222;
-}
-
-.header{
-    background:#1976d2;
-    color:white;
-    padding:20px 15px;
-    text-align:center;
-}
-
-.header h1{margin:0 0 6px;font-size:24px;}
-.header div{font-size:13px;opacity:.9;word-break:break-all;}
-
-.container{
-    max-width:600px;
-    margin:20px auto;
-    padding:0 15px 35px;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    margin-bottom:18px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.card h2{margin:0 0 12px;font-size:20px;}
-.card p{color:#667085;line-height:1.5;}
-
-.balance{
-    font-size:30px;
-    font-weight:bold;
-    color:#1976d2;
-    text-align:center;
-    margin:15px 0 5px;
-}
-
-input{
-    width:100%;
-    padding:13px;
-    margin:8px 0;
-    border:1px solid #ddd;
-    border-radius:5px;
-    font-size:16px;
-}
-
-input:focus{border-color:#1976d2;outline:none;}
-
-button{
-    width:100%;
-    padding:13px;
-    margin-top:10px;
-    border:0;
-    border-radius:5px;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-.deposit{
-    background:#198754;
-}
-
-.logout{
-    background:#333;
-}
-
-.message{
-    text-align:center;
-    margin-top:12px;
-    padding:12px;
-    border-radius:7px;
-    line-height:1.6;
-}
-
-.info{
-    background:#e8f1ff;
-    padding:12px;
-    border-radius:6px;
-    color:#333;
-    line-height:1.6;
-    margin-top:10px;
-}
-
-.request{
-    border-left:4px solid #1976d2;
-    padding:10px;
-    margin-top:10px;
-    background:#fafafa;
-    border-radius:5px;
-    line-height:1.7;
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}.header{background:linear-gradient(135deg,#1976d2,#0d47a1);color:#fff;padding:24px 16px;text-align:center}.header h1{margin:0 0 7px}.header p{margin:0;font-size:13px;opacity:.9;word-break:break-all}.container{max-width:620px;margin:18px auto;padding:0 14px 35px}.card{background:#fff;border-radius:16px;padding:19px;margin-bottom:15px;box-shadow:0 4px 18px rgba(0,0,0,.07)}.balance{text-align:center;background:linear-gradient(135deg,#eaf3ff,#fff);border-radius:14px;padding:18px}.balance small{color:#667085}.balance strong{display:block;font-size:30px;color:#1976d2;margin-top:7px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.nav button{margin:0;background:#1976d2}.nav button.active{background:#0d47a1}.section{display:none}.section.active{display:block}h2{font-size:19px;margin:0 0 12px}p{line-height:1.55;color:#667085}input{width:100%;padding:13px;margin:7px 0;border:1px solid #d8dee8;border-radius:9px;font-size:15px}button{width:100%;padding:13px;border:0;border-radius:9px;color:#fff;background:#1976d2;font-size:15px;margin-top:9px;cursor:pointer}button:disabled{opacity:.55}.pay{background:#198754}.refund{background:#dc3545}.back{background:#6c757d}.message{display:none;padding:11px;border-radius:9px;margin-top:10px;line-height:1.5}.success{display:block;background:#e9f8ef;color:#176b3a}.error{display:block;background:#ffebee;color:#b71c1c}.info{background:#f1f6ff;border-radius:10px;padding:13px;line-height:1.6}.item{background:#fafbfc;border:1px solid #edf0f5;border-radius:10px;padding:11px;margin-top:9px;line-height:1.65}.pending{color:#f57c00;font-weight:bold}.approved{color:#198754;font-weight:bold}.rejected{color:#dc3545;font-weight:bold}.logout{background:#343a40}.profile{line-height:1.8}.label{color:#667085}.value{font-weight:600;word-break:break-all}@media(max-width:430px){.nav{grid-template-columns:1fr}.container{padding-left:10px;padding-right:10px}}
+</style>
+</head>
+<body>
+<header class="header"><h1>Member Dashboard</h1><p id="userEmail">Loading...</p></header>
+<main class="container">
+<section class="card balance"><small>Available Credit</small><strong>৳<span id="balance">0.00</span></strong></section>
+<section class="card nav">
+<button onclick="showSection('payment',this)">💳 Payment</button>
+<button onclick="showSection('refund',this)">💸 Refund</button>
+<button onclick="showSection('account',this)">👤 My Account</button>
+</section>
+<section id="payment" class="card section active">
+<h2>💳 Payment</h2><p>পণ্য বা সেবার payment করার পর নিচের তথ্য দিন।</p>
+<div class="info"><b>Nagad / bKash</b><br>01720159859<br><small>এই নম্বরে শুধু Send Money গ্রহণ করা হয়।</small></div>
+<input id="paymentAmount" type="number" min="1" placeholder="Amount (৳)">
+<input id="transactionId" type="text" placeholder="Transaction ID">
+<button id="paymentButton" class="pay" onclick="submitPayment()">জমা দিন</button>
+<div id="paymentMessage" class="message"></div>
+</section>
+<section id="refund" class="card section">
+<h2>💸 Refund Request</h2><p>যোগ্য refund-এর জন্য amount ও আপনার payment number দিন।</p>
+<input id="refundAmount" type="number" min="1" placeholder="Amount (৳)">
+<input id="refundNumber" type="tel" placeholder="Nagad / bKash Number">
+<button id="refundButton" class="refund" onclick="submitRefund()">Refund Request</button>
+<div id="refundMessage" class="message"></div>
+<div id="refundHistory"></div>
+</section>
+<section id="account" class="card section">
+<h2>👤 My Account</h2><div class="profile"><div class="label">Email</div><div id="profileEmail" class="value">Loading...</div><br><div class="label">Available Credit</div><div class="value">৳<span id="profileBalance">0.00</span></div></div>
+<button class="back" onclick="location.href='https://sites.google.com/'">🔙 মূল ওয়েবসাইটে ফিরে যান</button>
+</section>
+<section class="card"><h2>📋 Payment History</h2><div id="paymentHistory">Loading...</div></section>
+<button class="logout" onclick="logout()">🚪 Logout</button>
+</main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,addDoc,query,where,onSnapshot,doc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyAItXQ5rE7MVpui3tazPxXN4F6sQGZ--ok",authDomain:"bet-e114b.firebaseapp.com",projectId:"bet-e114b",storageBucket:"bet-e114b.firebasestorage.app",messagingSenderId:"464681620003",appId:"1:464681620003:web:3169096c02b1d9ce3c5796",measurementId:"G-NDVCWNKV8B"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);let currentUser=null,busy=false;
+window.showSection=(id,btn)=>{document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')};
+onAuthStateChanged(auth,user=>{if(!user){location.href='./index.html';return}currentUser=user;userEmail.textContent='Logged in as: '+user.email;profileEmail.textContent=user.email;onSnapshot(doc(db,'users',user.uid),s=>{let b=s.exists()?Number(s.data().balance||0):0;balance.textContent=b.toFixed(2);profileBalance.textContent=b.toFixed(2)});loadPayments();loadRefunds()});
+function loadPayments(){let q=query(collection(db,'depositRequests'),where('userId','==',currentUser.uid));onSnapshot(q,s=>{paymentHistory.innerHTML=s.empty?'এখনও কোনো Payment Request নেই.':'';s.forEach(x=>{let d=x.data(),st=d.status||'pending';paymentHistory.innerHTML+=`<div class="item"><b>Amount:</b> ৳${Number(d.amount||0).toFixed(2)}<br><b>Transaction ID:</b> ${d.transactionId||'N/A'}<br><b>Status:</b> <span class="${st}">${st}</span></div>`})})}
+function loadRefunds(){let q=query(collection(db,'withdrawRequests'),where('userId','==',currentUser.uid));onSnapshot(q,s=>{refundHistory.innerHTML=s.empty?'':s.docs.map(x=>{let d=x.data(),st=d.status||'pending';return `<div class="item"><b>Amount:</b> ৳${Number(d.amount||0).toFixed(2)}<br><b>Number:</b> ${d.number||'N/A'}<br><b>Status:</b> <span class="${st}">${st}</span></div>`}).join('')})}
+window.submitPayment=async()=>{if(busy)return;let amount=Number(paymentAmount.value),tx=transactionId.value.trim();if(!amount||amount<=0)return show(paymentMessage,'সঠিক Amount লিখুন।',false);if(!tx)return show(paymentMessage,'Transaction ID লিখুন।',false);busy=true;paymentButton.disabled=true;paymentButton.textContent='জমা হচ্ছে...';try{await addDoc(collection(db,'depositRequests'),{userId:currentUser.uid,userEmail:currentUser.email,amount,transactionId:tx,status:'pending'});show(paymentMessage,'✅ Payment Request সফলভাবে জমা হয়েছে। Admin যাচাই করার পর status আপডেট হবে।',true);paymentAmount.value='';transactionId.value=''}catch(e){show(paymentMessage,'❌ Request জমা হয়নি। আবার চেষ্টা করুন।',false)}finally{busy=false;paymentButton.disabled=false;paymentButton.textContent='জমা দিন'}};
+window.submitRefund=async()=>{if(busy)return;let amount=Number(refundAmount.value),number=refundNumber.value.trim();if(!amount||amount<=0)return show(refundMessage,'সঠিক Amount লিখুন।',false);if(!number)return show(refundMessage,'Payment Number লিখুন।',false);busy=true;refundButton.disabled=true;refundButton.textContent='Processing...';try{await addDoc(collection(db,'withdrawRequests'),{userId:currentUser.uid,userEmail:currentUser.email,amount,number,status:'processing'});show(refundMessage,'✅ Refund Request জমা হয়েছে। Status: Processing',true);refundAmount.value='';refundNumber.value=''}catch(e){show(refundMessage,'❌ Request জমা হয়নি।',false)}finally{busy=false;refundButton.disabled=false;refundButton.textContent='Refund Request'}};
+function show(el,text,ok){el.className='message '+(ok?'success':'error');el.textContent=text}window.logout=async()=>{await signOut(auth);location.href='./index.html'};
+</script>
+</body>
+</html>    line-height:1.7;
 }
 
 @media(max-width:420px){
