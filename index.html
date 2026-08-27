@@ -3,110 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>292 Bet - Login</title>
-
+  <title>BetBD - Live Casino & Games</title>
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+    body { background-color: #0f172a; color: #fff; min-height: 100vh; }
+    
+    /* টপ বার / হেডার */
+    .header { background: #1e293b; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #334155; }
+    .logo { font-size: 1.5rem; font-weight: bold; color: #f43f5e; text-transform: uppercase; letter-spacing: 1px; }
+    .user-panel { display: flex; align-items: center; gap: 15px; }
+    .balance-box { background: #0f172a; padding: 8px 15px; border-radius: 20px; border: 1px solid #475569; font-weight: bold; }
+    .balance-box span { color: #22c55e; }
+    .deposit-btn { background: #22c55e; color: #000; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+    /* মেইন কন্টেন্ট / লবি */
+    .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    .section-title { font-size: 1.2rem; margin-bottom: 20px; color: #94a3b8; border-left: 4px solid #f43f5e; padding-left: 10px; }
+    
+    .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+    .game-card:hover { transform: translateY(-5px); border-color: #f43f5e; box-shadow: 0 10px 20px rgba(244,63,94,0.2); }
+    .game-img { height: 160px; background: #334155; position: relative; }
+    .game-img img { width: 100%; height: 100%; object-fit: cover; }
+    .game-name { padding: 15px; font-weight: bold; font-size: 1.1rem; text-align: center; }
+
+    /* গেম ভিউ এরিয়া (শুরুতে লুকানো থাকবে) */
+    #gameScreen { display: none; padding: 20px; text-align: center; }
+    .back-home { background: #f43f5e; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 20px; float: left; }
+    iframe { width: 100%; height: 500px; border: none; border-radius: 10px; background: #000; }
+
+    /* ডিপোজিট মোডাল পপআপ */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+    .modal-content { background: #1e293b; padding: 25px; border-radius: 10px; width: 320px; border: 1px solid #475569; text-align: center; }
+    .modal-content input { width: 100%; padding: 10px; margin: 10px 0; background: #0f172a; border: 1px solid #64748b; color: white; border-radius: 5px; text-align: center; }
+    .modal-content button { background: #22c55e; color: black; border: none; padding: 10px; width: 100%; font-weight: bold; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- হেডার বা লবি বার -->
+  <div class="header">
+    <div class="logo">🔥 BetBD Live</div>
+    <div class="user-panel">
+      <div class="balance-box">মূল ব্যালেন্স: <span id="mainBalance">১০০০.০০</span> ৳</div>
+      <button class="deposit-btn" onclick="openDeposit()">+ ডিপোজিট</button>
+    </div>
+  </div>
+
+  <!-- হোম লবি স্ক্রিন -->
+  <div class="container" id="homeLobby">
+    <div class="section-title">জনপ্রিয় ক্যাশ ও স্লট গেমস</div>
+    
+    <div class="game-grid">
+      <!-- এভিয়েটর গেম কার্ড -->
+      <div class="game-card" onclick="loadGame('Aviator', 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=500')">
+        <div class="game-img"><img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=500" alt="Aviator"></div>
+        <div class="game-name">✈️ Aviator Crash Game</div>
+      </div>
+
+      <!-- জিলি স্লটস গেম কার্ড -->
+      <div class="game-card" onclick="loadGame('Jili Slots', 'https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500')">
+        <div class="game-img"><img src="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500" alt="Slots"></div>
+        <div class="game-name">🎰 Jili Super Ace Slots</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- গেম খেলার স্ক্রিন -->
+  <div class="container" id="gameScreen">
+    <button class="back-home" onclick="goHome()">← মূল লবিতে ফিরুন</button>
+    <h2 id="currentGameTitle" style="margin-bottom: 15px; color: #f43f5e;"></h2>
+    <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
+      <h3 style="color: #22c55e; margin-bottom: 10px;">গেম রানিং আছে (ডেমো মোড)</h3>
+      <p style="color: #94a3b8; margin-bottom: 15px;">এখানে আপনার গেমের মূল স্ক্রিন বা কোড যুক্ত থাকবে।</p>
+      <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: #0f172a; border-radius: 8px; font-size: 1.5rem; color: #f43f5e;">
+        🎮 গেম ইন্টারফেস লোড হয়েছে...
+      </div>
+    </div>
+  </div>
+
+  <!-- ডিপোজিট পপআপ মোডাল -->
+  <div class="modal" id="depositModal">
+    <div class="modal-content">
+      <h3>বিকাশ / নগদ ডিপোজিট</h3>
+      <p style="font-size: 0.85rem; color: #94a3b8; margin: 10px 0;">বিকাশ পার্সোনাল: 01700000000 টাকা পাঠিয়ে নিচেই অ্যামাউন্ট লিখুন।</p>
+      <input type="number" id="depositAmount" placeholder="টাকার পরিমাণ (যেমন: 500)">
+      <input type="text" placeholder="বিকাশ ট্রানজ্যাকশন আইডি (TrxID)">
+      <button onclick="confirmDeposit()">ডিপোজিট কনফার্ম করুন</button>
+      <p style="margin-top: 10px; font-size: 0.8rem; color: #ef4444; cursor: pointer;" onclick="closeDeposit()">বাতিল করুন</p>
+    </div>
+  </div>
+
+  <script>
+    function openDeposit() {
+      document.getElementById('depositModal').style.display = 'flex';
+    }
+    function closeDeposit() {
+      document.getElementById('depositModal').style.display = 'none';
+    }
+    function confirmDeposit() {
+      let amt = parseFloat(document.getElementById('depositAmount').value);
+      if(isNaN(amt) || amt <= 0) {
+        alert("সঠিক পরিমাণ লিখুন!");
+        return;
+      }
+      let currentBal = parseFloat(document.getElementById('mainBalance').innerText);
+      currentBal += amt;
+      document.getElementById('mainBalance').innerText = currentBal.toFixed(2);
+      closeDeposit();
+      alert("সফলভাবে ডিপোজিট হয়েছে! ব্যালেন্স আপডেট করা হয়েছে।");
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1976d2, #0d47a1);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    function loadGame(gameName, imgUrl) {
+      document.getElementById('homeLobby').style.display = 'none';
+      document.getElementById('gameScreen').style.display = 'block';
+      document.getElementById('currentGameTitle').innerText = gameName;
     }
 
-    .container {
-      width: 100%;
-      max-width: 420px;
+    function goHome() {
+      document.getElementById('gameScreen').style.display = 'none';
+      document.getElementById('homeLobby').style.display = 'block';
     }
-
-    .card {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 28px 22px;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 32px;
-      font-weight: bold;
-      color: #0d47a1;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-      margin-bottom: 25px;
-    }
-
-    h2 {
-      text-align: center;
-      margin: 0 0 20px;
-      color: #172033;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      margin: 7px 0;
-      border: 1px solid #d8dee8;
-      border-radius: 9px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #1976d2;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 9px;
-      background: #1976d2;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0d47a1;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .signup-btn {
-      background: #198754;
-    }
-
-    .signup-btn:hover {
-      background: #146c43;
-    }
-
-    .message {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 9px;
-      text-align: center;
-      line-height: 1.5;
-      font-size: 14px;
-    }
+  </script>
+</body>
+</html>
 
     .success {
       display: block;
